@@ -8,6 +8,7 @@
   <bin name="bmesons"   file="tentativa.cc"></bin>
 <bin name="teste"   file="counter.cc"></bin>
 <bin name="skimmer"   file="skimmer_new.cc"></bin>
+<bin name="bsbu"   file="bmesons.cc"></bin>
 
 </environment>
 

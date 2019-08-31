@@ -27,6 +27,12 @@ double read_weights(TString variable, double var_value, int ch);
 double getWeight(double var_value, TH1D* h_weight);
 
 
+//ALL_CUTS
+//1 = apply all cuts
+//0 = ttree with acceptance cuts only-->> to be used as denominator of efficency calculation
+
+#define ALL_CUTS 0
+
 
 int main(int argc, char *argv[]){
   
@@ -60,13 +66,13 @@ int main(int argc, char *argv[]){
   TString output_file_pp= "/exper-sw/cmst3/cmssw/users/julia/CMSSW_7_5_8_patch5/src/UserCode/Bs_analysis/selected_data/selected_data_" + channel_to_ntuple_name(channel) + "_pp.root";
   //TString input_file_PbPb = "/lstore/cms/julia/crab_Bfinder_20181220_HIDoubleMuon_HIRun2018A_PromptReco_v1v2_1031_NoJSON_skimhltBsize_ntKp.root";
 
-  TString output_file_PbPb= "/home/t3cms/ev19u032/test/CMSSW_10_3_1_patch3/src/UserCode/BsinQGP/bin/prefiltered_trees_3/selected_data_" + channel_to_ntuple_name(channel) + "_PbPb_2018_corrected_test_train.root";
+  TString output_file_PbPb= ALL_CUTS ? "/home/t3cms/ev19u032/test/CMSSW_10_3_1_patch3/src/UserCode/BsinQGP/bin/prefiltered_trees_4/selected_data_" + channel_to_ntuple_name(channel) + "_PbPb_2018_corrected_test_train.root" : "/home/t3cms/ev19u032/test/CMSSW_10_3_1_patch3/src/UserCode/BsinQGP/bin/prefiltered_trees_4/acceptance_only_selected_data_" + channel_to_ntuple_name(channel) + "_PbPb_2018_corrected_test_train.root";
 
   TString output_file_pp_mc= "/exper-sw/cmst3/cmssw/users/julia/CMSSW_7_5_8_patch5/src/UserCode/Bs_analysis/mc_for_central_code/selected_mc_ntphi_pp.root";
   TString input_file_pp_mc = "/lstore/cms/julia/pp_files/loop_Bs0_pthat5_bstojpsiphi_pp.root";
 
 
-  TString output_file_PbPb_mc= "/home/t3cms/ev19u032/test/CMSSW_10_3_1_patch3/src/UserCode/BsinQGP/bin/prefiltered_trees_3/selected_mc_" + channel_to_ntuple_name(channel) + "_PbPb_2018_corrected_nocuts_BDT.root";
+  TString output_file_PbPb_mc= ALL_CUTS ? "/home/t3cms/ev19u032/test/CMSSW_10_3_1_patch3/src/UserCode/BsinQGP/bin/prefiltered_trees_4/selected_mc_" + channel_to_ntuple_name(channel) + "_PbPb_2018_corrected_nocuts_BDT.root" : "/home/t3cms/ev19u032/test/CMSSW_10_3_1_patch3/src/UserCode/BsinQGP/bin/prefiltered_trees_4/acceptance_only_selected_mc_" + channel_to_ntuple_name(channel) + "_PbPb_2018_corrected_nocuts_BDT.root";
 
 //  TString input_file_PbPb_mc = "/lstore/cms/julia/crab_Bfinder_20190221_Pythia8_BuToJpsiK_Bpt0p0_1032_NoJSON_pthatweight_hardcut_v2.root";
   std::cout<<"channel= "<<channel<<std::endl;
@@ -163,7 +169,7 @@ void data_selection(TString fin1, TString data_selection_output_file, int csyst,
   Float_t chi2cl;
   Float_t svpvdistance, svpvdis_err;
   Float_t mumumass, trktrkmass; 
- //Float_t svpvdistance_2D, svpvdis_2D_err;
+  //Float_t svpvdistance_2D, svpvdis_2D_err;
   Float_t alpha;
   //Double_t trk1D0, trk2D0, trk1D0Err, trk2D0Err;
   Float_t trk1Dz, trk1DzError;
@@ -175,7 +181,7 @@ void data_selection(TString fin1, TString data_selection_output_file, int csyst,
   Float_t mu1pt, mu2pt;
   Float_t mu1eta, mu2eta;
   Float_t d0, d0err;
- /* Double_t lxy;*/
+  /* Double_t lxy;*/
   Float_t  Pthatweight;
   Double_t bdt_pt_5_10;
   Double_t bdt_pt_10_15;
@@ -212,25 +218,25 @@ void data_selection(TString fin1, TString data_selection_output_file, int csyst,
     t4->Branch("Bchi2cl", &chi2cl);
     t4->Branch("Bmumumass", &mumumass);
     t4->Branch("Btrktrkmass", &trktrkmass);
- // t4->Branch("BsvpvDistance_2D", &svpvdistance_2D);
-  //t4->Branch("BsvpvDistance_2D_Err", &svpvdis_2D_err);
+    //t4->Branch("BsvpvDistance_2D", &svpvdistance_2D);
+    //t4->Branch("BsvpvDistance_2D_Err", &svpvdis_2D_err);
     t4->Branch("BsvpvDistance", &svpvdistance);
     t4->Branch("BsvpvDistance_Err", &svpvdis_err);
     t4->Branch("Balpha", &alpha);
-  //t4->Branch("Btrk1D0", &trk1D0);
-  //t4->Branch("Btrk2D0", &trk2D0);
-  //t4->Branch("Btrk1D0Err", &trk1D0Err);
-  //t4->Branch("Btrk2D0Err", &trk2D0Err);
+    //t4->Branch("Btrk1D0", &trk1D0);
+    //t4->Branch("Btrk2D0", &trk2D0);
+    //t4->Branch("Btrk1D0Err", &trk1D0Err);
+    //t4->Branch("Btrk2D0Err", &trk2D0Err);
     t4->Branch("Btrk1Dz1", &trk1Dz);
     t4->Branch("BvtxX", &vtxX);
     t4->Branch("BvtxY", &vtxY);
     t4->Branch("Btrk1DzError1", &trk1DzError);
     t4->Branch("Btrk1Dxy1", &trk1Dxy);
     t4->Branch("Btrk1DxyError1", &trk1DxyError);
-  //t4->Branch("Btrk2Dz", &trk2Dz);
+    //t4->Branch("Btrk2Dz", &trk2Dz);
     t4->Branch("Bd0", &d0);
     t4->Branch("Bd0err", &d0err);
-  //t4->Branch("Blxy", &lxy);
+    //t4->Branch("Blxy", &lxy);
 
     t4->Branch("Pthatweight", &Pthatweight);
     t4->Branch("HiBin", &HiBin);
@@ -273,19 +279,41 @@ void data_selection(TString fin1, TString data_selection_output_file, int csyst,
     scan_file<<"Bsize = "<<Bsize<<endl;
     scan_file<<"Bmass = "<<Bmass[i]<<endl;*/
     
-        if(channel==1){
+      if(channel==1){ //Bu
+
+	if (ALL_CUTS == 1){
 
 	  if(!((pprimaryVertexFilter&&phfCoincFilter2Th4&&pclusterCompatibilityFilter&&Btrk1Pt[i]>0.9&&Bpt[i]>5.0&&(BsvpvDistance[i]/BsvpvDisErr[i])>2.0&&Bchi2cl[i]>0.05&&TMath::Abs(Btrk1Eta[i])<2.4&&TMath::Abs(By[i])<2.4&&TMath::Abs(PVz)<15&&Bmass[i]>5&&Bmass[i]<6&&TMath::Abs(Bmumumass[i]-3.096900)<0.15&&Bmu1SoftMuID[i]&&Bmu2SoftMuID[i]&&((TMath::Abs(Bmu1eta[i])<1.2&&Bmu1pt[i]>3.5)||(TMath::Abs(Bmu1eta[i])>1.2&&TMath::Abs(Bmu1eta[i])<2.1&&Bmu1pt[i]>5.47-1.89*TMath::Abs(Bmu1eta[i]))||(TMath::Abs(Bmu1eta[i])>2.1&&TMath::Abs(Bmu1eta[i])<2.4&&Bmu1pt[i]>1.5))&&((TMath::Abs(Bmu2eta[i])<1.2&&Bmu2pt[i]>3.5)||(TMath::Abs(Bmu2eta[i])>1.2&&TMath::Abs(Bmu2eta[i])<2.1&&Bmu2pt[i]>5.47-1.89*TMath::Abs(Bmu2eta[i]))||(TMath::Abs(Bmu2eta[i])>2.1&&TMath::Abs(Bmu2eta[i])<2.4&&Bmu2pt[i]>1.5))&&Bmu1isTriggered[i]&&Bmu2isTriggered[i]&&(Btrk1PixelHit[i]+Btrk1StripHit[i])>=11&&(Btrk1Chi2ndf[i]/(Btrk1nStripLayer[i]+Btrk1nPixelLayer[i]))<0.18&&TMath::Abs(Btrk1PtErr[i]/Btrk1Pt[i])<0.1)&&((Bpt[i]>5&&Bpt[i]<7&&BDT_5_7[i]>-0.01)||(Bpt[i]>7&&Bpt[i]<10&&BDT_7_10[i]>0.08)||(Bpt[i]>10&&Bpt[i]<15&&BDT_10_15[i]>0.09)||(Bpt[i]>15&&Bpt[i]<20&&BDT_15_20[i]>0.09)||(Bpt[i]>20&&Bpt[i]<30&&BDT_20_30[i]>0.07)||(Bpt[i]>30&&Bpt[i]<50&&BDT_30_50[i]>0.12)||(Bpt[i]>50&&Bpt[i]<100&& BDT_50_100[i]>0.24)))) continue;
+	}
+
+	else if (ALL_CUTS == 0){
+
+	  if(!((TMath::Abs(Bmu1eta[i])<1.2&&Bmu1pt[i]>3.5)||(TMath::Abs(Bmu1eta[i])>1.2&&TMath::Abs(Bmu1eta[i])<2.1&&Bmu1pt[i]>5.47-1.89*TMath::Abs(Bmu1eta[i]))||(TMath::Abs(Bmu1eta[i])>2.1&&TMath::Abs(Bmu1eta[i])<2.4&&Bmu1pt[i]>1.5))&&((TMath::Abs(Bmu2eta[i])<1.2&&Bmu2pt[i]>3.5)||(TMath::Abs(Bmu2eta[i])>1.2&&TMath::Abs(Bmu2eta[i])<2.1&&Bmu2pt[i]>5.47-1.89*TMath::Abs(Bmu2eta[i]))||(TMath::Abs(Bmu2eta[i])>2.1&&TMath::Abs(Bmu2eta[i])<2.4&&Bmu2pt[i]>1.5))) continue;
+	}
 
 //          if(!(Btrk1Pt[i]>1.0&&Bpt[i]>5.0&&(BsvpvDistance[i]/BsvpvDisErr[i])>2.0&&Bchi2cl[i]>0.05&&TMath::Abs(Btrk1Eta[i])<2.4&&TMath::Abs(By[i])<2.4&&TMath::Abs(PVz)<15&&Bmass[i]>5&&Bmass[i]<6&&Bmu1isGlobalMuon[i]&&Bmu2isGlobalMuon[i]&&Bmu1dxyPV[i]<0.3&&Bmu2dxyPV[i]<0.3&&Bmu1dzPV[i]<20&&Bmu2dzPV[i]<20&&Bmu1InPixelLayer[i]>0&&(Bmu1InPixelLayer[i]+Bmu1InStripLayer[i])>5&&Bmu2InPixelLayer[i]>0&&(Bmu2InPixelLayer[i]+Bmu2InStripLayer[i])>5&&((TMath::Abs(Bmu1eta[i])<1.2&&Bmu1pt[i]>3.5)||(TMath::Abs(Bmu1eta[i])>1.2&&TMath::Abs(Bmu1eta[i])<2.1&&Bmu1pt[i]>(5.77-1.8*TMath::Abs(Bmu1eta[i])))||(TMath::Abs(Bmu1eta[i])>2.1&&TMath::Abs(Bmu1eta[i])<2.4&&Bmu1pt[i]>1.8))&&TMath::Abs(Bmumumass[i]-3.096900)<0.15&&Bmu1TMOneStationTight[i]&&Bmu2TMOneStationTight[i]&&Btrk1highPurity[i]&&(Btrk1PixelHit[i]+Btrk1StripHit[i])>=11&&(Btrk1Chi2ndf[i]/(Btrk1nStripLayer[i]+Btrk1nPixelLayer[i]))<0.18&&TMath::Abs(Btrk1PtErr[i]/Btrk1Pt[i])<0.1&&((Bpt[i]>5&&Bpt[i]<7&&(BsvpvDistance[i]/BsvpvDisErr[i])>10.497&&cos(Bdtheta[i])>0.922&&Btrk1Pt[i]>0.983&&Bchi2cl[i]>0.064&&TMath::Abs(Btrk1Eta[i])<2.380)||(Bpt[i]>7&&Bpt[i]<10&&(BsvpvDistance[i]/BsvpvDisErr[i])>15.208&&cos(Bdtheta[i])>0.966&&Btrk1Pt[i]>0.976&&Bchi2cl[i]>0.057)||(Bpt[i]>10&&Bpt[i]<15&&(BsvpvDistance[i]/BsvpvDisErr[i])>7.091&&cos(Bdtheta[i])>0.983&&Btrk1Pt[i]>1.540&&Bchi2cl[i]>0.052)||(Bpt[i]>15&&Bpt[i]<20&&(BsvpvDistance[i]/BsvpvDisErr[i])>5.884&&cos(Bdtheta[i])>0.616&&Btrk1Pt[i]>1.336&&Bchi2cl[i]>0.055)||(Bpt[i]>20&&Bpt[i]<30&&(BsvpvDistance[i]/BsvpvDisErr[i])>3.473&&cos(Bdtheta[i])>-0.535&&Btrk1Pt[i]>1.727&&Bchi2cl[i]>0.048)||(Bpt[i]>30&&Bpt[i]<50&&cos(Bdtheta[i])>0.993&&Btrk1Pt[i]>1.577&&Bchi2cl[i]>0.050&&TMath::Abs(Btrk1Eta[i])<2.387)||(Bpt[i]>50 && Bpt[i]<100)))) continue;
 //ESTE    if(!((pprimaryVertexFilter&&phfCoincFilter2Th4&&pclusterCompatibilityFilter&&Btrk1Pt[i]>0.9&&Bpt[i]>5.0&&(BsvpvDistance[i]/BsvpvDisErr[i])>2.0&&Bchi2cl[i]>0.05&&TMath::Abs(Btrk1Eta[i])<2.4&&TMath::Abs(By[i])<2.4&&TMath::Abs(PVz)<15&&Bmass[i]>5&&Bmass[i]<6&&TMath::Abs(Bmumumass[i]-3.096900)<0.15&&Bmu1SoftMuID[i]&&Bmu2SoftMuID[i]&&((TMath::Abs(Bmu1eta[i])<1.2&&Bmu1pt[i]>3.5)||(TMath::Abs(Bmu1eta[i])>1.2&&TMath::Abs(Bmu1eta[i])<2.1&&Bmu1pt[i]>5.47-1.89*TMath::Abs(Bmu1eta[i]))||(TMath::Abs(Bmu1eta[i])>2.1&&TMath::Abs(Bmu1eta[i])<2.4&&Bmu1pt[i]>1.5))&&((TMath::Abs(Bmu2eta[i])<1.2&&Bmu2pt[i]>3.5)||(TMath::Abs(Bmu2eta[i])>1.2&&TMath::Abs(Bmu2eta[i])<2.1&&Bmu2pt[i]>5.47-1.89*TMath::Abs(Bmu2eta[i]))||(TMath::Abs(Bmu2eta[i])>2.1&&TMath::Abs(Bmu2eta[i])<2.4&&Bmu2pt[i]>1.5))&&Bmu1isTriggered[i]&&Bmu2isTriggered[i]&&(Btrk1PixelHit[i]+Btrk1StripHit[i])>=11&&(Btrk1Chi2ndf[i]/(Btrk1nStripLayer[i]+Btrk1nPixelLayer[i]))<0.18&&TMath::Abs(Btrk1PtErr[i]/Btrk1Pt[i])<0.1)&&((Bpt[i]>5&&Bpt[i]<7&&(BsvpvDistance[i]/BsvpvDisErr[i])>16.457&&cos(Bdtheta[i])>0.987&&TMath::Abs(Btrk1Dxy1[i]/Btrk1DxyError1[i])>0.005&&Btrk1Pt[i]>1.092&&Bchi2cl[i]>0.065)||(Bpt[i]>7&&Bpt[i]<10&&(BsvpvDistance[i]/BsvpvDisErr[i])>12.714&&cos(Bdtheta[i])>0.947&&TMath::Abs(Btrk1Dxy1[i]/Btrk1DxyError1[i])>2.928&&Btrk1Pt[i]>0.838&&Bchi2cl[i]>0.053)||(Bpt[i]>10&&Bpt[i]<15&&(BsvpvDistance[i]/BsvpvDisErr[i])>9.086&&cos(Bdtheta[i])>0.994&&TMath::Abs(Btrk1Dxy1[i]/Btrk1DxyError1[i])>1.540&&Btrk1Pt[i]>1.262&&Bchi2cl[i]>0.055)||(Bpt[i]>15&&Bpt[i]<20&&(BsvpvDistance[i]/BsvpvDisErr[i])>7.587&&cos(Bdtheta[i])>0.757&&TMath::Abs(Btrk1Dxy1[i]/Btrk1DxyError1[i])>0.00&&Btrk1Pt[i]>1.813&&Bchi2cl[i]>0.056)||(Bpt[i]>20&&Bpt[i]<30&&(BsvpvDistance[i]/BsvpvDisErr[i])>4.004&&cos(Bdtheta[i])>0.996&&TMath::Abs(Btrk1Dxy1[i]/Btrk1DxyError1[i])>0.000&&Btrk1Pt[i]>1.822&&Bchi2cl[i]>0.050)||(Bpt[i]>30&&Bpt[i]<50&&(BsvpvDistance[i]/BsvpvDisErr[i])>2.000&&cos(Bdtheta[i])>0.998&&TMath::Abs(Btrk1Dxy1[i]/Btrk1DxyError1[i])>0.000&&Btrk1Pt[i]>2.046&&Bchi2cl[i]>0.050)||(Bpt[i]>50&&Bpt[i]<100&&(BsvpvDistance[i]/BsvpvDisErr[i])>4.084&&cos(Bdtheta[i])>-0.112&&TMath::Abs(Btrk1Dxy1[i]/Btrk1DxyError1[i])>0.000&&Btrk1Pt[i]>1.645&&Bchi2cl[i]>0.050)))) continue;
 //          if(!((pprimaryVertexFilter&&phfCoincFilter2Th4&&pclusterCompatibilityFilter&&Btrk1Pt[i]>0.9&&Bpt[i]>5.0&&(BsvpvDistance[i]/BsvpvDisErr[i])>2.0&&Bchi2cl[i]>0.05&&TMath::Abs(Btrk1Eta[i])<2.4&&TMath::Abs(By[i])<2.4&&TMath::Abs(PVz)<15&&Bmass[i]>5&&Bmass[i]<6&&TMath::Abs(Bmumumass[i]-3.096900)<0.15&&Bmu1SoftMuID[i]&&Bmu2SoftMuID[i]&&((TMath::Abs(Bmu1eta[i])<1.2&&Bmu1pt[i]>3.5)||(TMath::Abs(Bmu1eta[i])>1.2&&TMath::Abs(Bmu1eta[i])<2.1&&Bmu1pt[i]>5.47-1.89*TMath::Abs(Bmu1eta[i]))||(TMath::Abs(Bmu1eta[i])>2.1&&TMath::Abs(Bmu1eta[i])<2.4&&Bmu1pt[i]>1.5))&&((TMath::Abs(Bmu2eta[i])<1.2&&Bmu2pt[i]>3.5)||(TMath::Abs(Bmu2eta[i])>1.2&&TMath::Abs(Bmu2eta[i])<2.1&&Bmu2pt[i]>5.47-1.89*TMath::Abs(Bmu2eta[i]))||(TMath::Abs(Bmu2eta[i])>2.1&&TMath::Abs(Bmu2eta[i])<2.4&&Bmu2pt[i]>1.5))&&Bmu1isTriggered[i]&&Bmu2isTriggered[i]&&(Btrk1PixelHit[i]+Btrk1StripHit[i])>=11&&(Btrk1Chi2ndf[i]/(Btrk1nStripLayer[i]+Btrk1nPixelLayer[i]))<0.18&&TMath::Abs(Btrk1PtErr[i]/Btrk1Pt[i])<0.1))&&((Bpt[i]>5&&Bpt[i]<7&&(BsvpvDistance[i]/BsvpvDisErr[i])>16.457&&cos(Bdtheta[i])>0.987&&TMath::Abs(Btrk1Dxy1[i]/Btrk1DxyError1[i])>0.005&&Btrk1Pt[i]>1.092&&Bchi2cl[i]>0.065)||(Bpt[i]>7&&Bpt[i]<10&&(BsvpvDistance[i]/BsvpvDisErr[i])>12.714&&cos(Bdtheta[i])>0.947&&TMath::Abs(Btrk1Dxy1[i]/Btrk1DxyError1[i])>2.928&&Btrk1Pt[i]>0.838&&Bchi2cl[i]>0.053)||(Bpt[i]>10&&Bpt[i]<15&&(BsvpvDistance[i]/BsvpvDisErr[i])>9.086&&cos(Bdtheta[i])>0.994&&TMath::Abs(Btrk1Dxy1[i]/Btrk1DxyError1[i])>1.540&&Btrk1Pt[i]>1.262&&Bchi2cl[i]>0.055)||(Bpt[i]>15&&Bpt[i]<20&&(BsvpvDistance[i]/BsvpvDisErr[i])>7.587&&cos(Bdtheta[i])>0.757&&TMath::Abs(Btrk1Dxy1[i]/Btrk1DxyError1[i])>0.000&&Btrk1Pt[i]>1.813&&Bchi2cl[i]>0.056)||(Bpt[i]>20&&Bpt[i]<30&&(BsvpvDistance[i]/BsvpvDisErr[i])>4.004&&cos(Bdtheta[i])>0.996&&TMath::Abs(Btrk1Dxy1[i]/Btrk1DxyError1[i])>0.000&&Btrk1Pt[i]>1.822&&Bchi2cl[i]>0.050)||(Bpt[i]>30&&Bpt[i]<50&&(BsvpvDistance[i]/BsvpvDisErr[i])>2.000&&cos(Bdtheta[i])>0.998&&TMath::Abs(Btrk1Dxy1[i]/Btrk1DxyError1[i])>0.000&&Btrk1Pt[i]>2.046&&Bchi2cl[i]>0.050)||(Bpt[i]>50&&Bpt[i]<100&&(BsvpvDistance[i]/BsvpvDisErr[i])>4.084&&cos(Bdtheta[i])>-0.112&&TMath::Abs(Btrk1Dxy1[i]/Btrk1DxyError1[i])>0.000&&Btrk1Pt[i]>1.645&&Bchi2cl[i]>0.050))) continue;
           if(mc==1&&Bgen[i]!=23333) continue;
-        }        
+      }
+	
+
+	  
+              
         
         if(channel==4){//Bs
-          if(mc==0){  
+          if(mc==0){
+	    if (ALL_CUTS == 1){ 
+ 
 	    if(!((hiBin<181)&&Btrk1Pt[i]>1.0&&Btrk2Pt[i]>1.0&&Bchi2cl[i]>0.05&&BsvpvDistance[i]/BsvpvDisErr[i]>2.2&&Bpt[i]>5&&abs(Btrk1Eta[i]-0.0)<2.4&&abs(Btrk2Eta[i]-0.0)<2.4&&(TMath::Abs(By[i])<2.4&&TMath::Abs(Bmumumass[i]-3.096916)<0.15&&((abs(Bmu1eta[i])<1.2&&Bmu1pt[i]>3.5)||(abs(Bmu1eta[i])>1.2&&abs(Bmu1eta[i])<2.1&&Bmu1pt[i]>(5.77-1.8*abs(Bmu1eta[i])))||(abs(Bmu1eta[i])>2.1&&abs(Bmu1eta[i])<2.4&&Bmu1pt[i]>1.8))&&((abs(Bmu2eta[i])<1.2&&Bmu2pt[i]>3.5)||(abs(Bmu2eta[i])>1.2&&abs(Bmu2eta[i])<2.1&&Bmu2pt[i]>(5.77-1.8*abs(Bmu2eta[i])))||(abs(Bmu2eta[i])>2.1&&abs(Bmu2eta[i])<2.4&&Bmu2pt[i]>1.8))&&Bmu1TMOneStationTight[i]&&Bmu2TMOneStationTight[i]&&Bmu1InPixelLayer[i]>0&&(Bmu1InPixelLayer[i]+Bmu1InStripLayer[i])>5&&Bmu2InPixelLayer[i]>0&&(Bmu2InPixelLayer[i]+Bmu2InStripLayer[i])>5&&Bmu1dxyPV[i]<0.3&&Bmu2dxyPV[i]<0.3&&Bmu1dzPV[i]<20&&Bmu2dzPV[i]<20&&Bmu1isGlobalMuon[i]&&Bmu2isGlobalMuon[i]&&Btrk1highPurity[i]&&Btrk2highPurity[i]&&abs(Btrk1Eta[i])<2.4&&abs(Btrk2Eta[i])<2.4&&Btrk1Pt[i]>1.&&Btrk2Pt[i]>1.&&abs(Btktkmass[i]-1.019455)<0.015)&&(abs(PVz)<15&&pclusterCompatibilityFilter&&pprimaryVertexFilter)&&(Btrk1PixelHit[i]+Btrk1StripHit[i]>10)&&(Btrk2PixelHit[i]+Btrk2StripHit[i]>10)&&(Btrk1PtErr[i]/Btrk1Pt[i]<0.1)&&(Btrk2PtErr[i]/Btrk2Pt[i]<0.1)&&Btrk1Chi2ndf[i]/(Btrk1nStripLayer[i]+Btrk1nPixelLayer[i])<0.18&&Btrk2Chi2ndf[i]/(Btrk2nStripLayer[i]+Btrk2nPixelLayer[i])<0.18&&((Bpt[i]>5&&Bpt[i]<10&&BDT_pt_5_10[i]>0.32)||(Bpt[i]>10&&Bpt[i]<15&&BDT_pt_10_15[i]>0.29)||(Bpt[i]>15&&Bpt[i]<20&&BDT_pt_15_20[i]>0.35)||(Bpt[i]>20&&Bpt[i]<50&&BDT_pt_20_50[i]>0.33)))) continue;
+
+	    }
+
+	    else if (ALL_CUTS == 0){
+
+	      if(!((TMath::Abs(Bmu1eta[i])<1.2&&Bmu1pt[i]>3.5)||(abs(Bmu1eta[i])>1.2&&abs(Bmu1eta[i])<2.1&&Bmu1pt[i]>(5.77-1.8*abs(Bmu1eta[i])))||(abs(Bmu1eta[i])>2.1&&abs(Bmu1eta[i])<2.4&&Bmu1pt[i]>1.8))&&((abs(Bmu2eta[i])<1.2&&Bmu2pt[i]>3.5)||(abs(Bmu2eta[i])>1.2&&abs(Bmu2eta[i])<2.1&&Bmu2pt[i]>(5.77-1.8*abs(Bmu2eta[i])))||(abs(Bmu2eta[i])>2.1&&abs(Bmu2eta[i])<2.4&&Bmu2pt[i]>1.8))) continue;
+
+	    }
 
 	    //if(!((hiBin<181)&&Btrk1Pt[i]>1.0&&Btrk2Pt[i]>1.0&&Bchi2cl[i]>0.05&&BsvpvDistance[i]/BsvpvDisErr[i]>2.2&&Bpt[i]>5&&abs(Btrk1Eta[i]-0.0)<2.4&&abs(Btrk2Eta[i]-0.0)<2.4&&(TMath::Abs(By[i])<2.4&&TMath::Abs(Bmumumass[i]-3.096916)<0.15&&((abs(Bmu1eta[i])<1.2&&Bmu1pt[i]>3.5)||(abs(Bmu1eta[i])>1.2&&abs(Bmu1eta[i])<2.1&&Bmu1pt[i]>(5.77-1.8*abs(Bmu1eta[i])))||(abs(Bmu1eta[i])>2.1&&abs(Bmu1eta[i])<2.4&&Bmu1pt[i]>1.8))&&((abs(Bmu2eta[i])<1.2&&Bmu2pt[i]>3.5)||(abs(Bmu2eta[i])>1.2&&abs(Bmu2eta[i])<2.1&&Bmu2pt[i]>(5.77-1.8*abs(Bmu2eta[i])))||(abs(Bmu2eta[i])>2.1&&abs(Bmu2eta[i])<2.4&&Bmu2pt[i]>1.8))&&Bmu1TMOneStationTight[i]&&Bmu2TMOneStationTight[i]&&Bmu1InPixelLayer[i]>0&&(Bmu1InPixelLayer[i]+Bmu1InStripLayer[i])>5&&Bmu2InPixelLayer[i]>0&&(Bmu2InPixelLayer[i]+Bmu2InStripLayer[i])>5&&Bmu1dxyPV[i]<0.3&&Bmu2dxyPV[i]<0.3&&Bmu1dzPV[i]<20&&Bmu2dzPV[i]<20&&Bmu1isGlobalMuon[i]&&Bmu2isGlobalMuon[i]&&Btrk1highPurity[i]&&Btrk2highPurity[i]&&abs(Btrk1Eta[i])<2.4&&abs(Btrk2Eta[i])<2.4&&Btrk1Pt[i]>1.&&Btrk2Pt[i]>1.&&abs(Btktkmass[i]-1.019455)<0.015)&&(abs(PVz)<15&&pclusterCompatibilityFilter&&pprimaryVertexFilter)&&(Btrk1PixelHit[i]+Btrk1StripHit[i]>10)&&(Btrk2PixelHit[i]+Btrk2StripHit[i]>10)&&(Btrk1PtErr[i]/Btrk1Pt[i]<0.1)&&(Btrk2PtErr[i]/Btrk2Pt[i]<0.1)&&Btrk1Chi2ndf[i]/(Btrk1nStripLayer[i]+Btrk1nPixelLayer[i])<0.18&&Btrk2Chi2ndf[i]/(Btrk2nStripLayer[i]+Btrk2nPixelLayer[i])<0.18&&((Bpt[i]>5&&Bpt[i]<10&&BDT_pt_5_10[i]>0.17)||(Bpt[i]>10&&Bpt[i]<15&&BDT_pt_10_15[i]>0.14)||(Bpt[i]>15&&Bpt[i]<20&&BDT_pt_15_20[i]>0.2)||(Bpt[i]>20&&Bpt[i]<50&&BDT_pt_20_50[i]>0.2)))) continue;
 //Old training              if(!((hiBin<181)&&Btrk1Pt[i]>1.0&&Btrk2Pt[i]>1.0&&Bchi2cl[i]>0.05&&BsvpvDistance[i]/BsvpvDisErr[i]>2.2&&Bpt[i]>5&&abs(Btrk1Eta[i]-0.0)<2.4&&abs(Btrk2Eta[i]-0.0)<2.4&&(TMath::Abs(By[i])<2.4&&TMath::Abs(Bmumumass[i]-3.096916)<0.15&&((abs(Bmu1eta[i])<1.2&&Bmu1pt[i]>3.5)||(abs(Bmu1eta[i])>1.2&&abs(Bmu1eta[i])<2.1&&Bmu1pt[i]>(5.77-1.8*abs(Bmu1eta[i])))||(abs(Bmu1eta[i])>2.1&&abs(Bmu1eta[i])<2.4&&Bmu1pt[i]>1.8))&&((abs(Bmu2eta[i])<1.2&&Bmu2pt[i]>3.5)||(abs(Bmu2eta[i])>1.2&&abs(Bmu2eta[i])<2.1&&Bmu2pt[i]>(5.77-1.8*abs(Bmu2eta[i])))||(abs(Bmu2eta[i])>2.1&&abs(Bmu2eta[i])<2.4&&Bmu2pt[i]>1.8))&&Bmu1TMOneStationTight[i]&&Bmu2TMOneStationTight[i]&&Bmu1InPixelLayer[i]>0&&(Bmu1InPixelLayer[i]+Bmu1InStripLayer[i])>5&&Bmu2InPixelLayer[i]>0&&(Bmu2InPixelLayer[i]+Bmu2InStripLayer[i])>5&&Bmu1dxyPV[i]<0.3&&Bmu2dxyPV[i]<0.3&&Bmu1dzPV[i]<20&&Bmu2dzPV[i]<20&&Bmu1isGlobalMuon[i]&&Bmu2isGlobalMuon[i]&&Btrk1highPurity[i]&&Btrk2highPurity[i]&&abs(Btrk1Eta[i])<2.4&&abs(Btrk2Eta[i])<2.4&&Btrk1Pt[i]>1.&&Btrk2Pt[i]>1.&&abs(Btktkmass[i]-1.019455)<0.015)&&(abs(PVz)<15&&pclusterCompatibilityFilter&&pprimaryVertexFilter)&&(Btrk1PixelHit[i]+Btrk1StripHit[i]>10)&&(Btrk2PixelHit[i]+Btrk2StripHit[i]>10)&&(Btrk1PtErr[i]/Btrk1Pt[i]<0.1)&&(Btrk2PtErr[i]/Btrk2Pt[i]<0.1)&&Btrk1Chi2ndf[i]/(Btrk1nStripLayer[i]+Btrk1nPixelLayer[i])<0.18&&Btrk2Chi2ndf[i]/(Btrk2nStripLayer[i]+Btrk2nPixelLayer[i])<0.18&&((Bpt[i]>5&&Bpt[i]<10&&BDT_pt_5_10[i]>0.17)||(Bpt[i]>10&&Bpt[i]<15&&BDT_pt_10_15[i]>0.17)||(Bpt[i]>15&&Bpt[i]<20&&BDT_pt_15_20[i]>0.26)||(Bpt[i]>20&&Bpt[i]<50&&BDT_pt_20_50[i]>0.25)))) continue;
@@ -293,7 +321,13 @@ void data_selection(TString fin1, TString data_selection_output_file, int csyst,
           if(mc==1){
 	    // if(!((hiBin<181)&&Btrk1Pt[i]>1.0&&Btrk2Pt[i]>1.0&&Bchi2cl[i]>0.05&&BsvpvDistance[i]/BsvpvDisErr[i]>2.2&&Bpt[i]>5&&abs(Btrk1Eta[i]-0.0)<2.4&&abs(Btrk2Eta[i]-0.0)<2.4&&(TMath::Abs(By[i])<2.4&&TMath::Abs(Bmumumass[i]-3.096916)<0.15&&((abs(Bmu1eta[i])<1.2&&Bmu1pt[i]>3.5)||(abs(Bmu1eta[i])>1.2&&abs(Bmu1eta[i])<2.1&&Bmu1pt[i]>(5.77-1.8*abs(Bmu1eta[i])))||(abs(Bmu1eta[i])>2.1&&abs(Bmu1eta[i])<2.4&&Bmu1pt[i]>1.8))&&((abs(Bmu2eta[i])<1.2&&Bmu2pt[i]>3.5)||(abs(Bmu2eta[i])>1.2&&abs(Bmu2eta[i])<2.1&&Bmu2pt[i]>(5.77-1.8*abs(Bmu2eta[i])))||(abs(Bmu2eta[i])>2.1&&abs(Bmu2eta[i])<2.4&&Bmu2pt[i]>1.8))&&Bmu1TMOneStationTight[i]&&Bmu2TMOneStationTight[i]&&Bmu1InPixelLayer[i]>0&&(Bmu1InPixelLayer[i]+Bmu1InStripLayer[i])>5&&Bmu2InPixelLayer[i]>0&&(Bmu2InPixelLayer[i]+Bmu2InStripLayer[i])>5&&Bmu1dxyPV[i]<0.3&&Bmu2dxyPV[i]<0.3&&Bmu1dzPV[i]<20&&Bmu2dzPV[i]<20&&Bmu1isGlobalMuon[i]&&Bmu2isGlobalMuon[i]&&Btrk1highPurity[i]&&Btrk2highPurity[i]&&abs(Btrk1Eta[i])<2.4&&abs(Btrk2Eta[i])<2.4&&Btrk1Pt[i]>1.&&Btrk2Pt[i]>1.&&abs(Btktkmass[i]-1.019455)<0.015)&&(abs(PVz)<15&&pclusterCompatibilityFilter&&pprimaryVertexFilter)&&(Btrk1PixelHit[i]+Btrk1StripHit[i]>10)&&(Btrk2PixelHit[i]+Btrk2StripHit[i]>10)&&(Btrk1PtErr[i]/Btrk1Pt[i]<0.1)&&(Btrk2PtErr[i]/Btrk2Pt[i]<0.1)&&Btrk1Chi2ndf[i]/(Btrk1nStripLayer[i]+Btrk1nPixelLayer[i])<0.18&&Btrk2Chi2ndf[i]/(Btrk2nStripLayer[i]+Btrk2nPixelLayer[i])<0.18&&((Bpt[i]>5&&Bpt[i]<10&&BDT_pt_5_10[i]>0.17)||(Bpt[i]>10&&Bpt[i]<15&&BDT_pt_10_15[i]>0.14)||(Bpt[i]>15&&Bpt[i]<20&&BDT_pt_15_20[i]>0.2)||(Bpt[i]>20&&Bpt[i]<50&&BDT_pt_20_50[i]>0.2))&&Bgen[i]==23333)) continue;
 
-            if(!((hiBin<181)&&Btrk1Pt[i]>1.0&&Btrk2Pt[i]>1.0&&Bchi2cl[i]>0.05&&BsvpvDistance[i]/BsvpvDisErr[i]>2.2&&Bpt[i]>5&&abs(Btrk1Eta[i]-0.0)<2.4&&abs(Btrk2Eta[i]-0.0)<2.4&&(TMath::Abs(By[i])<2.4&&TMath::Abs(Bmumumass[i]-3.096916)<0.15&&((abs(Bmu1eta[i])<1.2&&Bmu1pt[i]>3.5)||(abs(Bmu1eta[i])>1.2&&abs(Bmu1eta[i])<2.1&&Bmu1pt[i]>(5.77-1.8*abs(Bmu1eta[i])))||(abs(Bmu1eta[i])>2.1&&abs(Bmu1eta[i])<2.4&&Bmu1pt[i]>1.8))&&((abs(Bmu2eta[i])<1.2&&Bmu2pt[i]>3.5)||(abs(Bmu2eta[i])>1.2&&abs(Bmu2eta[i])<2.1&&Bmu2pt[i]>(5.77-1.8*abs(Bmu2eta[i])))||(abs(Bmu2eta[i])>2.1&&abs(Bmu2eta[i])<2.4&&Bmu2pt[i]>1.8))&&Bmu1TMOneStationTight[i]&&Bmu2TMOneStationTight[i]&&Bmu1InPixelLayer[i]>0&&(Bmu1InPixelLayer[i]+Bmu1InStripLayer[i])>5&&Bmu2InPixelLayer[i]>0&&(Bmu2InPixelLayer[i]+Bmu2InStripLayer[i])>5&&Bmu1dxyPV[i]<0.3&&Bmu2dxyPV[i]<0.3&&Bmu1dzPV[i]<20&&Bmu2dzPV[i]<20&&Bmu1isGlobalMuon[i]&&Bmu2isGlobalMuon[i]&&Btrk1highPurity[i]&&Btrk2highPurity[i]&&abs(Btrk1Eta[i])<2.4&&abs(Btrk2Eta[i])<2.4&&Btrk1Pt[i]>1.&&Btrk2Pt[i]>1.&&abs(Btktkmass[i]-1.019455)<0.015)&&(abs(PVz)<15&&pclusterCompatibilityFilter&&pprimaryVertexFilter)&&(Btrk1PixelHit[i]+Btrk1StripHit[i]>10)&&(Btrk2PixelHit[i]+Btrk2StripHit[i]>10)&&(Btrk1PtErr[i]/Btrk1Pt[i]<0.1)&&(Btrk2PtErr[i]/Btrk2Pt[i]<0.1)&&Btrk1Chi2ndf[i]/(Btrk1nStripLayer[i]+Btrk1nPixelLayer[i])<0.18&&Btrk2Chi2ndf[i]/(Btrk2nStripLayer[i]+Btrk2nPixelLayer[i])<0.18&&((Bpt[i]>5&&Bpt[i]<10&&BDT_pt_5_10[i]>0.32)||(Bpt[i]>10&&Bpt[i]<15&&BDT_pt_10_15[i]>0.29)||(Bpt[i]>15&&Bpt[i]<20&&BDT_pt_15_20[i]>0.35)||(Bpt[i]>20&&Bpt[i]<50&&BDT_pt_20_50[i]>0.33))&&Bgen[i]==23333)) continue;
+            if (ALL_CUTS == 1){
+
+	      if(!((hiBin<181)&&Btrk1Pt[i]>1.0&&Btrk2Pt[i]>1.0&&Bchi2cl[i]>0.05&&BsvpvDistance[i]/BsvpvDisErr[i]>2.2&&Bpt[i]>5&&abs(Btrk1Eta[i]-0.0)<2.4&&abs(Btrk2Eta[i]-0.0)<2.4&&(TMath::Abs(By[i])<2.4&&TMath::Abs(Bmumumass[i]-3.096916)<0.15&&((abs(Bmu1eta[i])<1.2&&Bmu1pt[i]>3.5)||(abs(Bmu1eta[i])>1.2&&abs(Bmu1eta[i])<2.1&&Bmu1pt[i]>(5.77-1.8*abs(Bmu1eta[i])))||(abs(Bmu1eta[i])>2.1&&abs(Bmu1eta[i])<2.4&&Bmu1pt[i]>1.8))&&((abs(Bmu2eta[i])<1.2&&Bmu2pt[i]>3.5)||(abs(Bmu2eta[i])>1.2&&abs(Bmu2eta[i])<2.1&&Bmu2pt[i]>(5.77-1.8*abs(Bmu2eta[i])))||(abs(Bmu2eta[i])>2.1&&abs(Bmu2eta[i])<2.4&&Bmu2pt[i]>1.8))&&Bmu1TMOneStationTight[i]&&Bmu2TMOneStationTight[i]&&Bmu1InPixelLayer[i]>0&&(Bmu1InPixelLayer[i]+Bmu1InStripLayer[i])>5&&Bmu2InPixelLayer[i]>0&&(Bmu2InPixelLayer[i]+Bmu2InStripLayer[i])>5&&Bmu1dxyPV[i]<0.3&&Bmu2dxyPV[i]<0.3&&Bmu1dzPV[i]<20&&Bmu2dzPV[i]<20&&Bmu1isGlobalMuon[i]&&Bmu2isGlobalMuon[i]&&Btrk1highPurity[i]&&Btrk2highPurity[i]&&abs(Btrk1Eta[i])<2.4&&abs(Btrk2Eta[i])<2.4&&Btrk1Pt[i]>1.&&Btrk2Pt[i]>1.&&abs(Btktkmass[i]-1.019455)<0.015)&&(abs(PVz)<15&&pclusterCompatibilityFilter&&pprimaryVertexFilter)&&(Btrk1PixelHit[i]+Btrk1StripHit[i]>10)&&(Btrk2PixelHit[i]+Btrk2StripHit[i]>10)&&(Btrk1PtErr[i]/Btrk1Pt[i]<0.1)&&(Btrk2PtErr[i]/Btrk2Pt[i]<0.1)&&Btrk1Chi2ndf[i]/(Btrk1nStripLayer[i]+Btrk1nPixelLayer[i])<0.18&&Btrk2Chi2ndf[i]/(Btrk2nStripLayer[i]+Btrk2nPixelLayer[i])<0.18&&((Bpt[i]>5&&Bpt[i]<10&&BDT_pt_5_10[i]>0.32)||(Bpt[i]>10&&Bpt[i]<15&&BDT_pt_10_15[i]>0.29)||(Bpt[i]>15&&Bpt[i]<20&&BDT_pt_15_20[i]>0.35)||(Bpt[i]>20&&Bpt[i]<50&&BDT_pt_20_50[i]>0.33))&&Bgen[i]==23333)) continue;
+	    }
+	    else if (ALL_CUTS == 0){
+	      if(!((TMath::Abs(Bmu1eta[i])<1.2&&Bmu1pt[i]>3.5)||(abs(Bmu1eta[i])>1.2&&abs(Bmu1eta[i])<2.1&&Bmu1pt[i]>(5.77-1.8*abs(Bmu1eta[i])))||(abs(Bmu1eta[i])>2.1&&abs(Bmu1eta[i])<2.4&&Bmu1pt[i]>1.8))&&((abs(Bmu2eta[i])<1.2&&Bmu2pt[i]>3.5)||(abs(Bmu2eta[i])>1.2&&abs(Bmu2eta[i])<2.1&&Bmu2pt[i]>(5.77-1.8*abs(Bmu2eta[i])))||(abs(Bmu2eta[i])>2.1&&abs(Bmu2eta[i])<2.4&&Bmu2pt[i]>1.8))) continue;
+	    }
           }
 
         }
@@ -371,7 +405,7 @@ void data_selection(TString fin1, TString data_selection_output_file, int csyst,
 	pass_bdt=0;
 	// assign variables to add to ttree
 	for(int kk=0; kk<n_pt_bins_bu; kk++){
-	  if (( pt_bins_bu[kk]>Bpt[i]) || (Bpt[i] < pt_bins_bu[kk+1])) 
+	  if ((pt_bins_bu[kk]<Bpt[i]) && (Bpt[i]<pt_bins_bu[kk+1])) 
 	    continue;
 	  variable.Form("BDT_%g_%g", pt_bins_bu[kk], pt_bins_bu[kk+1]);
 	  pass_bdt = bdt_total > bdt_threshold_bu[kk] ? 1 : 0;
@@ -435,7 +469,7 @@ void data_selection(TString fin1, TString data_selection_output_file, int csyst,
 
 	// assign variables to add to ttree
 	for(int kk=0; kk<n_pt_bins_bs; kk++){
-	  if (( pt_bins_bs[kk]>Bpt[i]) || (Bpt[i] < pt_bins_bs[kk+1])) 
+	  if ((pt_bins_bs[kk]<Bpt[i]) && (Bpt[i]<pt_bins_bs[kk+1])) 
 	    continue;
 	  variable.Form("BDT_pt_%g_%g", pt_bins_bs[kk], pt_bins_bs[kk+1]);
 	  pass_bdt = bdt_total > bdt_threshold_bs[kk] ? 1 : 0;

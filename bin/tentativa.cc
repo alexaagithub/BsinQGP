@@ -4,8 +4,9 @@
 //
 // -Sideband subtraction and SPlot methods
 // -MC comparisons
-// -Data fit and fit validation
-// -N systematics(alexandra-acrescentar)
+// -Data fit, fit validation and fit systematics
+// -X-section, x-section ratio and x-section systematics
+//
 //
 // August 2019
 //
@@ -82,7 +83,7 @@ void pT_analysis(RooWorkspace& w,int n, TString);
 // 0 = read full data
 // note: when reading tratio should assign weight=1 for events out of range
 
-#define DATA_CUT 0
+#define DATA_CUT 1
 
 //particle
 // 0 = Bu
@@ -94,9 +95,9 @@ int main(){
   
   int n_var;
 
-  TString input_file_data = particle ? "/home/t3cms/ev19u032/test/CMSSW_10_3_1_patch3/src/UserCode/BsinQGP/bin/prefiltered_trees_3/selected_data_ntphi_PbPb_2018_corrected_test_train.root" : "/home/t3cms/ev19u032/test/CMSSW_10_3_1_patch3/src/UserCode/BsinQGP/bin/prefiltered_trees_3/selected_data_ntKp_PbPb_2018_corrected_test_train.root";
+  TString input_file_data = particle ? "/home/t3cms/ev19u032/test/CMSSW_10_3_1_patch3/src/UserCode/BsinQGP/bin/prefiltered_trees_4/selected_data_ntphi_PbPb_2018_corrected_test_train.root" : "/home/t3cms/ev19u032/test/CMSSW_10_3_1_patch3/src/UserCode/BsinQGP/bin/prefiltered_trees_4/selected_data_ntKp_PbPb_2018_corrected_test_train.root";
 
-  TString input_file_mc = particle ? "/home/t3cms/ev19u032/test/CMSSW_10_3_1_patch3/src/UserCode/BsinQGP/bin/prefiltered_trees_3/selected_mc_ntphi_PbPb_2018_corrected_nocuts_BDT.root" :  "/home/t3cms/ev19u032/test/CMSSW_10_3_1_patch3/src/UserCode/BsinQGP/bin/prefiltered_trees_3/selected_mc_ntKp_PbPb_2018_corrected_nocuts_BDT.root";
+  TString input_file_mc = particle ? "/home/t3cms/ev19u032/test/CMSSW_10_3_1_patch3/src/UserCode/BsinQGP/bin/prefiltered_trees_4/selected_mc_ntphi_PbPb_2018_corrected_nocuts_BDT.root" :  "/home/t3cms/ev19u032/test/CMSSW_10_3_1_patch3/src/UserCode/BsinQGP/bin/prefiltered_trees_4/selected_mc_ntKp_PbPb_2018_corrected_nocuts_BDT.root";
 
 
   std::vector<TH1D*> histos_sideband_sub;
