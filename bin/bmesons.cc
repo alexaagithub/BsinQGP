@@ -69,7 +69,8 @@ void set_up_workspace_variables(RooWorkspace& w);
 TH1D* create_histogram_mc(RooRealVar var, TTree* t, int n); 
 TH1D* create_histogram(RooRealVar var,TString name, double factor, RooDataSet* reduced, RooDataSet* central, RooDataSet* total, int n); 
 void read_data(RooWorkspace& w, TString f_input);
-void build_pdf (RooWorkspace& w);
+//void build_pdf (RooWorkspace& w);
+void build_pdf (RooWorkspace& w, std::string choice = "nominal");
 void plot_complete_fit(RooWorkspace& w);
 void do_splot(RooWorkspace& w);
 TH1D* make_splot(RooWorkspace& w, int n, TString label);
@@ -128,7 +129,8 @@ int main(){
   RooWorkspace* ws = new RooWorkspace("ws");
   set_up_workspace_variables(*ws);
   read_data(*ws,input_file_data);
-  build_pdf(*ws);
+  //build_pdf(*ws);
+  build_pdf(*ws, choice = "nominal");
 
   // if(DATA_CUT == 0)
   //{
@@ -738,7 +740,7 @@ void read_data(RooWorkspace& w, TString f_input){
 
 }
 
-void build_pdf(RooWorkspace& w) {
+void build_pdf(RooWorkspace& w, std::string choice) {
 
   RooRealVar Bmass = *(w.var("Bmass"));
   RooDataSet* data = (RooDataSet*) w.data("data");
