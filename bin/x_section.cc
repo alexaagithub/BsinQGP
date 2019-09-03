@@ -53,22 +53,95 @@
 #include <TF1.h>
 #include <RooPolynomial.h>
 #include <fstream>
+#include <TGraphAsymmErrors.h>
+#include <TEfficiency.h>
 using namespace RooStats;
 using namespace RooFit;
 using namespace std;
 
-//functions
+void read_raw_histogram(TFile input_file);
+
 
 //particle
-// 0 = Bu
+//  0 = Bu
 // 1 = Bs
 
-#define particle 0
 
 int main(){
 
-  TString input_raw_yield = particle ? "./results/Bs/Bpt/pT.root" : "./results/Bu/Bpt/pT.root";
-  TString input_efficiency = particle ? //colocar os outputs do joão
+  //alteração alexandra
+  //TString raw_teste = "/lstore/cms/ev19u032/pT_Bs_meson.root";
+  TFile* f_raw_yield_Bs = new TFile("/lstore/cms/ev19u032/pT_Bs_meson.root");
+  // TFile* f_raw_yield_Bu = new TFile("/lstore/cms/ev19u032/pT_Bu_meson.root");
+  
+  //TFile* f_efficiency_Bs = new TFile("/home/t3cms/julia/LSTORE/CMSSW_7_5_8_patch5/src/UserCode/Bs_analysis/for_students/MCstudiesPbPbPtBin.root");
+  // TFile* f_efficiency_Bu = new TFile("/home/t3cms/julia/LSTORE/CMSSW_7_5_8_patch5/src/UserCode/Bs_analysis/for_students/MCstudiesPbPb_Bsbin.root");
 
-const int branching_fraction = particle ? 
-const int luminosity = 
+  /*
+    const double branching_fraction_Bs = 0.0000313;
+    const double branching_fraction_Bu = 0.0000599;
+
+  const double branching_fraction_error_Bs = 0.0000030;
+  const double branching_fraction_error_Bu = 0.0000023;
+
+  const double luminosity = 0.0000000015;  //wrong value
+  const double luminosity_error = 0.0000000001;  //wrong value
+
+  double pt_bins[n_pt_bins + 1] = {5, 10, 15, 20, 50};
+  double n_pt_bins = 4;
+
+  TGraphAsymmErrors* raw_yield_Bs = (TGraphAsymmErrors*)f_raw_yield_Bs->Get("Graph");
+  TGraphAsymmErrors* raw_yield_Bu = (TGraphAsymmErrors*)f_raw_yield_Bu->Get("Graph");
+
+  TEfficiency* efficiency_Bs = new TEfficiency("efficiency_Bs", "efficiency_Bs", n_pt_bins, pt_bins);
+  TEfficiency* efficiency_Bu = new TEfficiency("efficiency_Bu", "efficiency_Bu", n_pt_bins, pt_bins);
+  efficiency_Bs = (TEfficiency*)f_efficiency_Bs->Get("hEff");
+  efficiency_Bu = (TEfficiency*)f_efficiency_Bu->Get("hEff");
+
+  TH1F* x_section_Bu = new TH1F("x_section_Bu", "x_section_Bu", n_pt_bins, pt_bins);
+  TH1F* x_section_Bs = new TH1F("x_section_Bs", "x_section_Bs", n_pt_bins, pt_bins);
+
+  double x_sec;
+
+  double n;
+  double eff;
+  */
+  read_raw_histogram(raw_teste);
+
+
+}
+//main ends
+
+
+ //alteração alexandra
+void read_raw_histogram(TFile input_file_raw){
+  //TFile* file_raw = new TFile(input_file_raw, "read");
+  TH1F* histo_raw = (TH1F*)file_raw->Get("Graph;2");
+  TCanvas a;
+  histo_raw->Draw();
+  a.SaveAs("./teste.pdf");}
+  
+  //GetBinContent(n_pt_bins)
+
+
+
+  //{
+  //TGraphErrors* g= new TGraphErrors("test.csv", "%lg %lg %lg", ",");
+  //Double_t *x=g->GetX();
+  //Double_t *y=g->GetY();
+  //Double_t *ex=g->GetEX();
+
+  //for (int i=0; i<8; i++) printf("%g %g %g\n",x[i],y[i],ex[i]);
+
+  //}
+
+  //for(int i = 0; i < 4; i++)
+  // {
+  // n = raw_yield_Bs->
+  // }
+
+  // return 0;
+
+
+//main function ends
+  
