@@ -7,6 +7,7 @@
 <environment>
 <bin name="skimmer"   file="skimmer_new.cc"></bin>
 <bin name="bmesons"   file="bmesons.cc"></bin>
+<bin name="bbin"   file="bmesons_bin.cc"></bin>
 
 </environment>
 
