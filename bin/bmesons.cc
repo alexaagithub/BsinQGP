@@ -5,21 +5,13 @@
 // -Sideband subtraction and SPlot methods
 // -MC comparisons
 // -Data fit, fit validation and fit systematics
-<<<<<<< HEAD
-=======
-// -X-section, x-section ratio and x-section systematics
->>>>>>> parent of 61b69fac... update
 //
 //
 // August 2019
 //
 /////////////////////////////////////////////////////////////////////////
 
-<<<<<<< HEAD
 #include <iomanip>
-=======
-
->>>>>>> parent of 61b69fac... update
 #include <sstream>
 #include <vector>
 #include <TStyle.h>
@@ -65,11 +57,8 @@
 #include <TF1.h>
 #include <RooPolynomial.h>
 #include <fstream>
-<<<<<<< HEAD
 #include <TGraph.h>
 #include "TMultiGraph.h"
-=======
->>>>>>> parent of 61b69fac... update
 using namespace RooStats;
 using namespace RooFit;
 using namespace std;
@@ -81,36 +70,23 @@ void set_up_workspace_variables(RooWorkspace& w);
 TH1D* create_histogram_mc(RooRealVar var, TTree* t, int n); 
 TH1D* create_histogram(RooRealVar var,TString name, double factor, RooDataSet* reduced, RooDataSet* central, RooDataSet* total, int n); 
 void read_data(RooWorkspace& w, TString f_input);
-<<<<<<< HEAD
-=======
-//void build_pdf (RooWorkspace& w);
->>>>>>> parent of 61b69fac... update
 void build_pdf (RooWorkspace& w, std::string choice = "nominal");
 void plot_complete_fit(RooWorkspace& w);
 void do_splot(RooWorkspace& w);
 TH1D* make_splot(RooWorkspace& w, int n, TString label);
 void validate_fit(RooWorkspace* w);
 void get_ratio( std::vector<TH1D*>,  std::vector<TH1D*>,  std::vector<TString>, TString);
-<<<<<<< HEAD
 void pT_analysis(RooWorkspace& w,int n, TString, TString);
 double get_yield_syst(RooDataSet *dt, TString syst_src);
 void fit_syst_error(TString);
 void fit_syst_error_bin(TString, double a, double b);
-=======
-void pT_analysis(RooWorkspace& w,int n, TString);
-//void fit_syst_error(TString);
->>>>>>> parent of 61b69fac... update
 
 // DATA_CUT
 // 1 = apply cuts, recd ..strict variable range when reading data -- to be used for mc validation
 // 0 = read full data
 // note: when reading tratio should assign weight=1 for events out of range
 
-<<<<<<< HEAD
 #define DATA_CUT 1
-=======
-#define DATA_CUT 0
->>>>>>> parent of 61b69fac... update
 
 //particle
 // 0 = Bu
@@ -122,7 +98,6 @@ int main(){
   
   int n_var;
 
-<<<<<<< HEAD
   TString input_file_data = particle ? "/lstore/cms/ev19u032/prefiltered_trees_final/selected_data_ntphi_PbPb_2018_corrected_test_train.root" : "/lstore/cms/ev19u032/prefiltered_trees_final/selected_data_ntKp_PbPb_2018_corrected_test_train.root";
 
   TString input_file_mc = particle ? "/lstore/cms/ev19u032/prefiltered_trees_final/selected_mc_ntphi_PbPb_2018_corrected_BDT.root" :  "/lstore/cms/ev19u032/prefiltered_trees_final/selected_mc_ntKp_PbPb_2018_corrected_BDT.root";
@@ -137,11 +112,6 @@ int main(){
 
 
   //input Bu mc: /lstore/cms/ev19u032/prefiltered_trees_final/selected_mc_ntKp_PbPb_2018_corrected_BDT.root
-=======
-  TString input_file_data = particle ? "/home/t3cms/ev19u032/test/CMSSW_10_3_1_patch3/src/UserCode/BsinQGP/bin/prefiltered_trees_4/selected_data_ntphi_PbPb_2018_corrected_test_train.root" : "/home/t3cms/ev19u032/test/CMSSW_10_3_1_patch3/src/UserCode/BsinQGP/bin/prefiltered_trees_4/selected_data_ntKp_PbPb_2018_corrected_test_train.root";
-
-  TString input_file_mc = particle ? "/home/t3cms/ev19u032/test/CMSSW_10_3_1_patch3/src/UserCode/BsinQGP/bin/prefiltered_trees_4/selected_mc_ntphi_PbPb_2018_corrected_nocuts_BDT.root" :  "/home/t3cms/ev19u032/test/CMSSW_10_3_1_patch3/src/UserCode/BsinQGP/bin/prefiltered_trees_4/selected_mc_ntKp_PbPb_2018_corrected_nocuts_BDT.root";
->>>>>>> parent of 61b69fac... update
 
 
   std::vector<TH1D*> histos_sideband_sub;
@@ -172,27 +142,13 @@ int main(){
   RooWorkspace* ws = new RooWorkspace("ws");
   set_up_workspace_variables(*ws);
   read_data(*ws,input_file_data);
-<<<<<<< HEAD
   build_pdf(*ws);
-=======
-  //build_pdf(*ws);
-  build_pdf(*ws, choice = "nominal");
-
-  // if(DATA_CUT == 0)
-  //{
-  // plot_complete_fit(*ws);
-  // }
->>>>>>> parent of 61b69fac... update
 
   plot_complete_fit(*ws);
 
   //validate_fit(ws);
 
-<<<<<<< HEAD
   //if(!DATA_CUT){fit_syst_error(input_file_data);}
-=======
-  // if(!DATA_CUT){fit_syst_error(input_file_data);}
->>>>>>> parent of 61b69fac... update
 
   //sideband_sub histograms
   histos_sideband_sub = sideband_subtraction(ws, n_bins, n_var);
@@ -200,10 +156,7 @@ int main(){
   do_splot(*ws);
   histos_splot = splot_method(*ws,n_bins,variables, n_var);
   
-<<<<<<< HEAD
 
-=======
->>>>>>> parent of 61b69fac... update
   //monte carlo histograms
   TFile *fin_mc = new TFile(input_file_mc);
   TTree* t1_mc = particle ? (TTree*)fin_mc->Get("ntphi") : (TTree*)fin_mc->Get("ntKp");
@@ -218,18 +171,12 @@ int main(){
   //get the ratio between the data (splot method) and the MC
   if(DATA_CUT == 1){
 
-<<<<<<< HEAD
     get_ratio(histos_splot, histos_mc,names,"weights.root");
 
   }
 
   if(!DATA_CUT){pT_analysis(*ws,n_bins[0], "pT.root", input_file_data);}
 
-=======
-    get_ratio(histos_splot, histos_mc,names,"weights.root");}
-
-  if(!DATA_CUT){pT_analysis(*ws,n_bins[0], "pT.root");}
->>>>>>> parent of 61b69fac... update
 
   //COMPARISONS//
   
@@ -430,7 +377,6 @@ int main(){
 	ss_comp[i]->Draw("same");
 	
 	
-<<<<<<< HEAD
 	//TLegend* leg;
 	
 	//leg = new TLegend(0.7, 0.7, 0.9, 0.9);
@@ -440,17 +386,6 @@ int main(){
 	//leg->AddEntry(sp_comp[i]->GetName(), "SPlot", "l");
 	//leg->SetTextSize(0.03);
 	//leg->Draw("same");
-=======
-	TLegend* leg;
-	
-	leg = new TLegend(0.7, 0.7, 0.9, 0.9);
-	
-	leg->AddEntry(ss_comp[i]->GetName(), "S. Subtraction", "l");
-	leg->AddEntry(mc_comp[i]->GetName(), "Monte Carlo", "l");
-	leg->AddEntry(sp_comp[i]->GetName(), "SPlot", "l");
-	leg->SetTextSize(0.03);
-	leg->Draw("same");
->>>>>>> parent of 61b69fac... update
 	
 	if(particle == 0){
 	  a.SaveAs("./results/Bu/mc_validation_plots/ss_mc_sp/"+names[i]+"_mc_validation_Bu.pdf");
@@ -460,11 +395,7 @@ int main(){
 	  a.SaveAs("./results/Bs/mc_validation_plots/ss_mc_sp/"+names[i]+"_mc_validation_Bs.gif");
 	}
 	
-<<<<<<< HEAD
 	//leg->Delete();
-=======
-	leg->Delete();
->>>>>>> parent of 61b69fac... update
       }
   }
 
@@ -475,29 +406,17 @@ int main(){
 //main function ends
 
 
-<<<<<<< HEAD
 void pT_analysis(RooWorkspace& w, int n, TString ptfile, TString datafile){
 
   TString dir_name = particle ? "./results/Bs/Bpt/" : "./results/Bu/Bpt/";
 
   TFile* f_wei = new TFile(dir_name + "/"+ ptfile, "recreate"); 
-=======
-void pT_analysis(RooWorkspace& w, int n, TString filename){
-
-  TString dir_name = particle ? "./results/Bs/Bpt/" : "./results/Bu/Bpt/";
-
-  TFile* f_wei = new TFile(dir_name + "/"+ filename, "recreate"); 
->>>>>>> parent of 61b69fac... update
 
   RooAbsPdf*  model = w.pdf("model");
   RooRealVar* Bpt  = w.var("Bpt");
   RooDataSet* data = (RooDataSet*) w.data("data");
   RooRealVar Bmass = *(w.var("Bmass"));
 
-<<<<<<< HEAD
-=======
-  
->>>>>>> parent of 61b69fac... update
 #if particle == 0
   const int n_pt_bins = 7;
   double pt_bins [n_pt_bins + 1] = {5,7,10,15,20,30,50,100};  
@@ -513,7 +432,6 @@ void pT_analysis(RooWorkspace& w, int n, TString filename){
   double yield[n_pt_bins];
   double yield_err_low[n_pt_bins];
   double yield_err_high[n_pt_bins];
-<<<<<<< HEAD
   double yield_err_syst[n_pt_bins];
   double m_yield_err_syst[n_pt_bins];
   for(int k = 1; k<n_pt_bins; k++){
@@ -522,18 +440,12 @@ void pT_analysis(RooWorkspace& w, int n, TString filename){
   } 
 
   //dúvida
-=======
->>>>>>> parent of 61b69fac... update
 
   RooDataSet* data_pt, data_w, data_wp;
   RooFitResult* fit_pt;
   RooRealVar* n_sig_pt;
   RooRealVar* n_comb_pt;
-<<<<<<< HEAD
   
-=======
-
->>>>>>> parent of 61b69fac... update
   //plots the signal+background and signal distributions in linear and log scales
   TCanvas* a = new TCanvas("pT","pT", 800, 600);
   a->Divide(2,2);
@@ -612,7 +524,6 @@ void pT_analysis(RooWorkspace& w, int n, TString filename){
   
   //applies the splot method and evaluates the weighted average pT per bin
 
-<<<<<<< HEAD
   const int n_pdf_syst=4;
   //number of pdfs
   TString syst_src[n_pdf_syst]={"nominal","bkg_poly","signal1gauss","bkg_range"};
@@ -621,8 +532,6 @@ void pT_analysis(RooWorkspace& w, int n, TString filename){
   //value of the systematic uncertainty
 
   
-=======
->>>>>>> parent of 61b69fac... update
   for(int i=0;i<n_pt_bins;i++){
     //select data subset corresponding to pT bin
     data_pt = (RooDataSet*) data->reduce(Form("Bpt>%lf",pt_bins[i]));
@@ -631,7 +540,6 @@ void pT_analysis(RooWorkspace& w, int n, TString filename){
    
     //perform fit and save result
     fit_pt = model->fitTo(*data_pt, Minos(true), Save());
-<<<<<<< HEAD
 
     //plots the fit result
     RooPlot* massframe = Bmass.frame(Title(""));
@@ -639,17 +547,6 @@ void pT_analysis(RooWorkspace& w, int n, TString filename){
     model->plotOn(massframe, Range("all"));
     TCanvas b;
     massframe->Draw();
-=======
-    RooPlot* massframe = Bmass.frame(Title(""));
-
-    data_pt->plotOn(massframe);
-    model->plotOn(massframe, Range("all"));
-
-    //plots the fit result
-    TCanvas b;
-    massframe->Draw();
-
->>>>>>> parent of 61b69fac... update
     if(particle == 0){
       b.SaveAs(Form("./results/Bu/Bpt/%lf_%lf_fit_plot_Bu.gif", pt_bins[i], pt_bins[i+1]));
       b.SaveAs(Form("./results/Bu/Bpt/%lf_%lf_fit_plot_Bu.pdf", pt_bins[i], pt_bins[i+1]));
@@ -661,31 +558,20 @@ void pT_analysis(RooWorkspace& w, int n, TString filename){
     //get yield and its errors
 
     //floatParsFinal returns the list of floating parameters after fit
-<<<<<<< HEAD
     //cout << "Value of floating parameters" << endl;
     //fit_pt->floatParsFinal().Print("s");
 
-=======
-    cout << "Value of floating parameters" << endl;
-    fit_pt->floatParsFinal().Print("s");
->>>>>>> parent of 61b69fac... update
     //signal yield
     n_sig_pt = (RooRealVar*) fit_pt->floatParsFinal().find("n_signal");
     //combinatorial background yield
     n_comb_pt = (RooRealVar*) fit_pt->floatParsFinal().find("n_combinatorial");
 
-<<<<<<< HEAD
     yield[i]= n_sig_pt->getVal();
     yield_err_low [i] = n_sig_pt->getError(); 
-=======
-    yield[i] = n_sig_pt->getVal();
-    yield_err_low[i] = n_sig_pt->getError(); 
->>>>>>> parent of 61b69fac... update
     yield_err_high[i] = n_sig_pt->getError(); 
 
     cout << "test asym error:" << n_sig_pt->getErrorLo() << " " <<  n_sig_pt->getAsymErrorLo() << " symmetric: " <<  n_sig_pt->getError() <<  endl;
 
-<<<<<<< HEAD
     //Loop through the array of pdfs 
     //for(int k=0;k<n_pdf_syst;k++){
     //dúvida
@@ -706,10 +592,6 @@ void pT_analysis(RooWorkspace& w, int n, TString filename){
     m_yield_err_syst[i] = sqrt(yield_err_syst[i]);
  
     //sPlot technique requires model parameters (other than the yields) to be fixed
-=======
-    //sPlot technique requires model parameters (other than the yields) to be fixed
-    
->>>>>>> parent of 61b69fac... update
     RooRealVar* mean  = w.var("mean");
     RooRealVar* sigma1 = w.var("sigma1");
     RooRealVar* sigma2 = w.var("sigma2");
@@ -740,31 +622,22 @@ void pT_analysis(RooWorkspace& w, int n, TString filename){
 
     pt_low[i]= pt_mean[i]-pt_bins[i];
     pt_high[i]= pt_bins[i+1]-pt_mean[i];
-<<<<<<< HEAD
   
-=======
->>>>>>> parent of 61b69fac... update
 
     //normalize yield to bin width
     double bin_width = pt_bins[i+1]-pt_bins[i];
     yield[i] = yield[i]/bin_width;
     yield_err_low[i] = yield_err_low[i]/bin_width;
     yield_err_high[i] = yield_err_high[i]/bin_width;
-<<<<<<< HEAD
     m_yield_err_syst[i] = m_yield_err_syst[i]/bin_width;
 
     //    if(dosplotpt)      cout<<"pt: "<< pt_bins[i]<<"-" << pt_bins[i+1] << " mean_weight:"<<mean_w<< "  Nsig:" <<yield[i]<< "-"<<yield_err_low[i] <<"+" << yield_err_high[i]<<endl;
-=======
-
-    cout<<"pt: "<< pt_bins[i]<<"-" << pt_bins[i+1] << " mean_weight:"<<mean_w<< "  Nsig:" <<yield[i]<< "-"<<yield_err_low[i] <<"+" << yield_err_high[i]<<endl;
->>>>>>> parent of 61b69fac... update
 
   }
 
   //plot yield vs average pT
 
   TCanvas c;
-<<<<<<< HEAD
   TMultiGraph* mg = new TMultiGraph();
 
   TGraphAsymmErrors* gr = new TGraphAsymmErrors(n_pt_bins,pt_mean,yield,pt_low,pt_high,yield_err_low,yield_err_high);
@@ -802,19 +675,6 @@ void pT_analysis(RooWorkspace& w, int n, TString filename){
    
   
  
-=======
-  TGraphAsymmErrors* gr = new TGraphAsymmErrors(n_pt_bins,pt_mean,yield,pt_low,pt_high,yield_err_low,yield_err_high);
-  gr->SetTitle("");
-  gr->SetMarkerColor(4);
-  gr->SetMarkerStyle(21);
-  gr->GetXaxis()->SetTitle("p_{T}(B) [GeV]");
-  gr->GetYaxis()->SetTitle("raw yield [GeV^{-1}]");
-  gr->Draw("AP");
-  gr->Write();
-  delete f_wei;
- 
-
->>>>>>> parent of 61b69fac... update
   if(particle == 0){
     c.SaveAs("./results/Bu/Bpt/raw_yield_pt_Bu.pdf");
     c.SaveAs("./results/Bu/Bpt/raw_yield_pt_Bu.gif");}
@@ -822,12 +682,9 @@ void pT_analysis(RooWorkspace& w, int n, TString filename){
     c.SaveAs("./results/Bs/Bpt/raw_yield_pt_Bs.pdf");
     c.SaveAs("./results/Bs/Bpt/raw_yield_pt_Bs.gif");}
 
-<<<<<<< HEAD
 //save both vectors (systematic and statistical errors) in a text file
 
 
-=======
->>>>>>> parent of 61b69fac... update
   TCanvas l;
   //log scale
   l.SetLogx();
@@ -847,7 +704,6 @@ void pT_analysis(RooWorkspace& w, int n, TString filename){
     l.SaveAs("./results/Bs/Bpt/raw_yield_pt_logscale_Bs.pdf");
     l.SaveAs("./results/Bs/Bpt/raw_yield_pt_logscale_Bs.gif");}
 
-<<<<<<< HEAD
 
   //evaluates the N systematics for each bin
   //for(int i=0;i<n_pt_bins;i++){
@@ -859,10 +715,6 @@ void pT_analysis(RooWorkspace& w, int n, TString filename){
 
 //pT_analysis end
 
-=======
-}
-
->>>>>>> parent of 61b69fac... update
 //get the ratio between the data (splot method) and the MC and save it in a root file
 void get_ratio( std::vector<TH1D*> data, std::vector<TH1D*> mc,  std::vector<TString> v_name, TString filename) {
 
@@ -908,10 +760,7 @@ void get_ratio( std::vector<TH1D*> data, std::vector<TH1D*> mc,  std::vector<TSt
   f_wei->ls();
   f_wei->Close();
 
-<<<<<<< HEAD
 
-=======
->>>>>>> parent of 61b69fac... update
   return;
 }
 
@@ -977,7 +826,6 @@ void read_data(RooWorkspace& w, TString f_input){
 
 void build_pdf(RooWorkspace& w, std::string choice) {
 
-<<<<<<< HEAD
   cout << "choice " << choice << endl;
 
   RooRealVar Bmass = *(w.var("Bmass"));
@@ -986,18 +834,10 @@ void build_pdf(RooWorkspace& w, std::string choice) {
   cout << "buid pdf 0 " << choice << endl;
 
   //  RooDataSet* reduceddata_central;
-=======
-  RooRealVar Bmass = *(w.var("Bmass"));
-  RooDataSet* data = (RooDataSet*) w.data("data");
-
-
-  RooDataSet* reduceddata_central;
->>>>>>> parent of 61b69fac... update
 
   double left = particle ? 5.3 : 5.15;
   double right = particle ? 5.45 : 5.4;
   double mass_peak = particle ? 5.366 : 5.265;
-<<<<<<< HEAD
 
   cout << "buid pdf 1 " << choice << endl;
   
@@ -1008,11 +848,6 @@ void build_pdf(RooWorkspace& w, std::string choice) {
   //  reduceddata_central = (RooDataSet*) reduceddata_central->reduce(Form("Bmass<%lf",right));
 
   cout << "buid pdf 3 " << choice << endl;
-=======
-  
-  reduceddata_central = (RooDataSet*) data->reduce(Form("Bmass>%lf",left));
-  reduceddata_central = (RooDataSet*) reduceddata_central->reduce(Form("Bmass<%lf",right));
->>>>>>> parent of 61b69fac... update
 
   //SIGNAL//
 
@@ -1026,15 +861,11 @@ void build_pdf(RooWorkspace& w, std::string choice) {
   //sigma1.setConstant();
   //sigma2.setConstant();
   //cofs.setConstant();
-<<<<<<< HEAD
 
   //systematics->signal
   RooRealVar sigma3("sigma3","sigma3",0.012,0.010,0.030);
   RooGaussian signal3("signal3","signal3",Bmass, mean, sigma3);
   
-=======
-  //introduzir parâmetro de escala
->>>>>>> parent of 61b69fac... update
   
   
   //BACKGROUND//
@@ -1084,11 +915,8 @@ void build_pdf(RooWorkspace& w, std::string choice) {
   Bmass.setRange("right",right,Bmass.getMax());
   Bmass.setRange("left",Bmass.getMin(),left);
   Bmass.setRange("peak",left,right);
-<<<<<<< HEAD
   Bmass.setRange("peakright",left,Bmass.getMax());
 
-=======
->>>>>>> parent of 61b69fac... update
 
   //n values
   double n_signal_initial = data->sumEntries(TString::Format("abs(Bmass-%g)<0.05",mass_peak)) - data->sumEntries(TString::Format("abs(Bmass-%g)<0.10&&abs(Bmass-%g)>0.05",mass_peak,mass_peak));
@@ -1103,7 +931,6 @@ void build_pdf(RooWorkspace& w, std::string choice) {
   f_jpsipi.setConstant(kTRUE);
   RooProduct n_jpsipi("n_jpsipi","n_jpsipi",RooArgList(n_signal,f_jpsipi));
 
-<<<<<<< HEAD
   //systematics->bkg
   RooRealVar slope("slope","slope",0,-10,10);
   RooPolynomial poly_bkg("poly_bkg", "poly_bkg", Bmass, slope);
@@ -1276,24 +1103,6 @@ double get_yield_syst(RooDataSet* data_bin, TString syst_src) {
 
 
 //get_yield_syst ends
-=======
-  if(particle == 0){
-    RooAddPdf model("model", "model", RooArgList(signal,fit_side,erf,jpsipi),RooArgList(n_signal,n_combinatorial,n_erf,n_jpsipi));
-    model.fitTo(*data,Range("all"));
-    w.import(model);
-  }else if(particle == 1){
-    RooAddPdf model("model", "model", RooArgList(signal,fit_side), RooArgList(n_signal, n_combinatorial)); 
-    model.fitTo(*data,Range("all"));
-    w.import(model);
-    {
-      w.import(fit_side);
-      w.import(signal);
-    } 
-  }
-}
-
-//build_pdf ends
->>>>>>> parent of 61b69fac... update
 
 void plot_complete_fit(RooWorkspace& w){
 
@@ -1303,11 +1112,8 @@ void plot_complete_fit(RooWorkspace& w){
   RooRealVar Bmass = *(w.var("Bmass"));
   RooRealVar* lambda   = w.var("lambda");
 
-<<<<<<< HEAD
   model->fitTo(*data,Range("all"));
 
-=======
->>>>>>> parent of 61b69fac... update
   RooPlot* massframe = Bmass.frame();
 
   if(particle == 0){
@@ -2063,11 +1869,7 @@ void set_up_workspace_variables(RooWorkspace& w)
     mass_max=6.;
 
     pt_min=5.;
-<<<<<<< HEAD
     pt_max= DATA_CUT ? 100. : 100.;
-=======
-    pt_max= DATA_CUT ? 50. : 100.;
->>>>>>> parent of 61b69fac... update
 
     y_min=-2.4;
     y_max=2.4;
