@@ -31,7 +31,7 @@ double getWeight(double var_value, TH1D* h_weight);
 //1 = apply all cuts
 //0 = ttree with acceptance cuts only-->> to be used as denominator of efficency calculation
 
-#define ALL_CUTS 1
+#define ALL_CUTS 0
 
 
 int main(int argc, char *argv[]){
@@ -73,7 +73,6 @@ int main(int argc, char *argv[]){
 
 
   TString output_file_PbPb_mc= ALL_CUTS ? "/home/t3cms/ev19u032/test/CMSSW_10_3_1_patch3/src/UserCode/BsinQGP/bin/prefiltered_trees_4/selected_mc_" + channel_to_ntuple_name(channel) + "_PbPb_2018_corrected_nocuts_BDT.root" : "/home/t3cms/ev19u032/test/CMSSW_10_3_1_patch3/src/UserCode/BsinQGP/bin/prefiltered_trees_4/acceptance_only_selected_mc_" + channel_to_ntuple_name(channel) + "_PbPb_2018_corrected_nocuts_BDT.root";
-  cout<< "nome"<<output_file_PbPb_mc;
 
 //  TString input_file_PbPb_mc = "/lstore/cms/julia/crab_Bfinder_20190221_Pythia8_BuToJpsiK_Bpt0p0_1032_NoJSON_pthatweight_hardcut_v2.root";
   std::cout<<"channel= "<<channel<<std::endl;
@@ -264,7 +263,7 @@ void data_selection(TString fin1, TString data_selection_output_file, int csyst,
   int count=0;
 //  for (int evt=0;evt<10000;evt++) {
   //for (int evt=0;evt<10000;evt++) {
-  //for (int evt=0;evt<10;evt++) {
+  // for (int evt=0;evt<1000;evt++) {
   for (int evt=0;evt<(t1->GetEntries());evt++) {
 //  for (int evt=0;evt<5;evt++) {
   //  scan_file<<"*********************** EVT = "<<endl;
@@ -274,7 +273,6 @@ void data_selection(TString fin1, TString data_selection_output_file, int csyst,
   //ESTE    if(!((hiBin<181)&&abs(PVz)<15))continue;
     } 
         
-    //cout<<output_file_PbPb_mc;
     for(int i=0; i<Bsize; i++){
 
     /*scan_file<<"B nr = "<<i<<" from evt "<<evt<<endl;
