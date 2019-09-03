@@ -31,7 +31,7 @@ double getWeight(double var_value, TH1D* h_weight);
 //1 = apply all cuts
 //0 = ttree with acceptance cuts only-->> to be used as denominator of efficency calculation
 
-#define ALL_CUTS 0
+#define ALL_CUTS 1
 
 
 int main(int argc, char *argv[]){
