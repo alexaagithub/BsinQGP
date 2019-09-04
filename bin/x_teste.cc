@@ -55,14 +55,14 @@
 #include <fstream>
 #include <TGraphAsymmErrors.h>
 #include <TEfficiency.h>
-#include "TMultiGraph.h"
-
 using namespace RooStats;
 using namespace RooFit;
 using namespace std;
 
-void plot_xsection(int bin_n,double* pt_m, double* pt_l, double* pt_h, double* x_sec, double* stat, double* syst, TString meson);
-double* error_syst_final(int n_bins,int n_sources_error,double (*source_error_bin)[5]);
+
+//void plot_xsection(int bin_n,double* pt_m, double* pt_l, double* pt_h, double* x_sec, double* stat, double* syst);
+//void error_syst_final(double s_errors_bin);
+
 double get_error(int bin, TGraphAsymmErrors * graph);
 double get_pt_low(int bin, TGraphAsymmErrors * graph);
 double get_pt_high(int bin, TGraphAsymmErrors * graph);
@@ -70,18 +70,12 @@ double get_pt_high(int bin, TGraphAsymmErrors * graph);
 
 int main(){
 
-  //Raw yield files
   //TFile* f_raw_yield_Bs = new TFile("./results/Bs/Bpt/pT.root");
   TFile* f_raw_yield_Bs = new TFile("/lstore/cms/ev19u032/pT_Bs_meson.root"); //file updated
   TFile* f_raw_yield_Bu = new TFile("/lstore/cms/ev19u032/pT_Bu_meson.root");
   
-  //Efficiency files
   TFile* f_efficiency_Bs = new TFile("/home/t3cms/julia/LSTORE/CMSSW_7_5_8_patch5/src/UserCode/Bs_analysis/for_students/MCstudiesPbPbPtBin.root");
   TFile* f_efficiency_Bu = new TFile("/home/t3cms/julia/LSTORE/CMSSW_7_5_8_patch5/src/UserCode/Bs_analysis/for_students/MCstudiesPbPb_Bsbin.root");
-
-  //Efficiency systematic error files
-  //TFile* f_eff_syst_Bs = new TFile("/home/t3cms/ev19u033/CMSSW_10_3_1_patch3/src/UserCode/BsinQGP/bin/results/Bs/efficiency/root_files_Bpt");
-  //TFile* f_eff_syst_Bu = new TFile("/home/t3cms/ev19u033/CMSSW_10_3_1_patch3/src/UserCode/BsinQGP/bin/results/Bu/efficiency/root_files_Bpt/efficiency_systematic_errors.root");
 
   const double branching_fraction_Bs = 0.0000313;
   const double branching_fraction_Bu = 0.0000599;
@@ -89,23 +83,16 @@ int main(){
   //const double branching_fraction_error_Bs = 0.0000030;
   //const double branching_fraction_error_Bu = 0.0000023;
 
-  const double luminosity = 1.5e-9;
-  const double luminosity_error = 0.02;  
+  const double luminosity = 0.0000000015;  //wrong value
+  //const double luminosity_error = 0.0000000001;  //wrong value
 
   double pt_bins[] = {5, 10, 15, 20, 50};
-  const int n_pt_bins = 4;
-  const int n_s_errors = 5;
-  //number of sources of systematic error
-  //signal_yield, branching fraction, luminosity, efficiency+acceptance, efficiency error from MC
-  double s_errors_bin_Bu [n_pt_bins][n_s_errors];
-  double s_errors_bin_Bs [n_pt_bins][n_s_errors];
-  //arrays with the values of systematic errors for each bin
+  const int  n_pt_bins = 4;
 
   //raw_yield
 
   TGraphAsymmErrors* raw_yield_Bs = (TGraphAsymmErrors*)f_raw_yield_Bs->Get("Graph");
   TGraphAsymmErrors* raw_yield_Bu = (TGraphAsymmErrors*)f_raw_yield_Bu->Get("Graph");
-
   //systematic errors 
   TGraphAsymmErrors* raw_yield_Bs_syst = (TGraphAsymmErrors*)f_raw_yield_Bs->Get("Graph;2");
   TGraphAsymmErrors* raw_yield_Bu_syst = (TGraphAsymmErrors*)f_raw_yield_Bu->Get("Graph;2");
@@ -113,30 +100,38 @@ int main(){
   TGraphAsymmErrors* raw_yield_Bs_stat = (TGraphAsymmErrors*)f_raw_yield_Bs->Get("Graph;1");
   TGraphAsymmErrors* raw_yield_Bu_stat = (TGraphAsymmErrors*)f_raw_yield_Bu->Get("Graph;1");
 
+
+
   //efficiency
   TH1D* efficiency_Bs = new TH1D("efficiency_Bs", "efficiency_Bs", n_pt_bins, pt_bins);
   efficiency_Bs = (TH1D*)f_efficiency_Bs->Get("hEff");
   TH1D* efficiency_Bu = new TH1D("efficiency_Bu", "efficiency_Bu", n_pt_bins, pt_bins);
   efficiency_Bu = (TH1D*)f_efficiency_Bu->Get("hEff");
 
-  //TGraphErrors* eff_syst_Bs = (TGraphErrors*)f_eff_syst_Bs->Get("Graph");
-  //TGraphErrors* eff_syst_Bu = (TGraphErrors*)f_eff_syst_Bu->Get("Graph");
+  //TH1F* x_section_Bu = new TH1F("x_section_Bu", "x_section_Bu", n_pt_bins, pt_bins);
+  //TH1F* x_section_Bs = new TH1F("x_section_Bs", "x_section_Bs", n_pt_bins, pt_bins);
 
+  double x_sec_Bu[4];
+  double x_sec_Bs[4];
+  double x_sec0;
+
+  double n;
+  double eff;
 
   //yield values
-  double n;
+
   double* raw_Bs_y = raw_yield_Bs->GetY();
   double* raw_Bu_y = raw_yield_Bu->GetY();
-  //pT values
   double* pT_Bs = raw_yield_Bs->GetX();
   double* pT_Bu = raw_yield_Bu->GetX();
+
 
   //yield and pT errors
   double syst_Bs[n_pt_bins];
   double syst_Bu[n_pt_bins];
   double stat_Bs[n_pt_bins]; 
   double stat_Bu[n_pt_bins];
-  
+
   double pT_min_Bs[n_pt_bins];
   double pT_max_Bs[n_pt_bins];
   double pT_min_Bu[n_pt_bins];
@@ -147,49 +142,31 @@ int main(){
     syst_Bu[i] = get_error(i,raw_yield_Bu_syst);
     stat_Bs[i] = get_error(i,raw_yield_Bs_stat);
     stat_Bu[i] = get_error(i,raw_yield_Bu_stat);
-    
+
     pT_min_Bs[i] = get_pt_low(i, raw_yield_Bs_stat);
     pT_max_Bs[i] = get_pt_high(i, raw_yield_Bs_stat);
     pT_min_Bu[i] = get_pt_low(i, raw_yield_Bu_stat);
     pT_max_Bu[i] = get_pt_high(i, raw_yield_Bu_stat);
 
-  } 
-
-
-  //efficiency value->comentado por enquanto
-  double eff;
-  //double* eff_s_Bs = eff_syst_Bs->GetY();
-  //double* eff_s_Bu = eff_syst_Bu->GetY();
-
-  //ARRAYS//
-
-
-  for(int i = 0; i < n_pt_bins; i++){
-    s_errors_bin_Bu[i][0] = luminosity_error;
-    s_errors_bin_Bs[i][0] = luminosity_error;
-
-    s_errors_bin_Bu[i][1] = branching_fraction_Bu;
-    s_errors_bin_Bs[i][1] = branching_fraction_Bs;
-
-    s_errors_bin_Bu[i][2] = syst_Bu[i]/raw_Bu_y[i];//confirm
-    s_errors_bin_Bs[i][2] = syst_Bs[i]/raw_Bs_y[i];
-
-    s_errors_bin_Bu[i][3] = 0.00005;
-    s_errors_bin_Bs[i][3] = 0.00005;
-
-    s_errors_bin_Bu[i][4] = 0.0000001;
-    s_errors_bin_Bs[i][4] = 0.0000001;
-
   }
+ 
 
 
+ 
+  
+ 
 
-  ////////
-
-  //x-section values
-  double x_sec_Bu[n_pt_bins];
-  double x_sec_Bs[n_pt_bins];
-  double x_sec0;
+  /*
+  for(int i = 0; i < n_pt_bins; i++)
+    {
+      cout << "Bin " << i+1 << endl;
+      cout << "Efficiency Bs = " << efficiency_Bs->GetBinContent(i+1) << endl;
+      cout << "Efficiency Bu = " << efficiency_Bu->GetBinContent(i+1) << endl;
+      cout << "Yield Bs = " << raw_Bs_y[i] << endl;
+      cout << "Yield Bu = " << raw_Bu_y[i] << endl;
+      cout << endl;
+    }
+  */
 
   for(int i = 0; i < n_pt_bins; i++)
     {
@@ -210,24 +187,29 @@ int main(){
       cout << endl;
     }
 
-  //x-section systematics
-  //double x_sec_Bu_syst[n_pt_bins] = error_syst_final(n_pt_bins,n_s_errors,s_errors_bin_Bu);
-  //double x_sec_Bs_syst[n_pt_bins] = error_syst_final(n_pt_bins,n_s_errors,s_errors_bin_Bs);
-  double *x_sec_Bu_syst = error_syst_final(n_pt_bins,n_s_errors,s_errors_bin_Bu);
-  double *x_sec_Bs_syst = error_syst_final(n_pt_bins,n_s_errors,s_errors_bin_Bs);
+  /*
+  TCanvas Bu_c;
+  x_section_Bu->SetMinimum(100000000000000);
+  x_section_Bu->SetMaximum(200000000000000000);
+  x_section_Bu->Draw();
+  Bu_c.SaveAs("./results/Bu/x_section/x_section.gif");
+  Bu_c.SaveAs("./results/Bu/x_section/x_section.pdf");
+  TFile* Bu_f = new TFile("./results/Bu/x_section/x_section.root", "recreate");
+  Bu_f->cd();
+  x_section_Bu->Write();
+  Bu_f->Write();
+  TCanvas Bs_c;
+  x_section_Bs->Draw();
+  Bs_c.SaveAs("./results/Bs/x_section/x_section.gif");
+  Bs_c.SaveAs("./results/Bs/x_section/x_section.pdf");
+  TFile* Bs_f = new TFile("./results/Bs/x_section/x_section.root", "recreate");
+  Bs_f->cd();
+  x_section_Bs->Write();
+  Bs_f->Write();
+  */
 
-  //PRINT
-  for (int i=0;i<n_pt_bins;i++){
-    cout<<"x_sec_Bu: "<<x_sec_Bu_syst[i]<<endl;
-    cout<<"x_sec_Bs: "<<x_sec_Bs_syst[i]<<endl;
-  }
-
-
-  //PLOT B+ X-section
-  plot_xsection(n_pt_bins,pT_Bu,pT_min_Bu,pT_max_Bu,x_sec_Bu,stat_Bu,x_sec_Bu_syst,"Bu");
-  //PLOT Bs X-section
-  plot_xsection(n_pt_bins,pT_Bs,pT_min_Bs,pT_max_Bs,x_sec_Bs,stat_Bs,x_sec_Bs_syst,"Bs");
-
+  return 0;
+  
 }
 
 //main ends
@@ -253,9 +235,20 @@ double get_pt_high(int bin, TGraphAsymmErrors * graph_name){
 }
 
 //get_pt_high ends
- 
 
-void plot_xsection(int bin_n,double* pt_m, double* pt_l, double* pt_h, double* x_sec, double* stat, double* syst, TString meson){
+//returns the histogram's error (systematic or statistical) per bin
+//void get_error(TH1F* histo_name, int number_bins){
+//double error[number_bins];
+//for(int i = 0; i < number_bins; i++){
+//  double error[i] = histo_name->GetBinError(i);
+//}
+//return double error;
+//}
+
+//get_error ends
+ 
+/*
+void plot_xsection(int bin_n,double* pt_m, double* pt_l, double* pt_h, double* x_sec, double* stat, double* syst){
   TCanvas c;
   TMultiGraph* mg = new TMultiGraph();
   
@@ -264,56 +257,46 @@ void plot_xsection(int bin_n,double* pt_m, double* pt_l, double* pt_h, double* x
   g_stat->SetMarkerColor(4);
   g_stat->SetMarkerStyle(1);
   g_stat->SetLineColor(1);
-  //g_stat->GetXaxis()->SetTitle("p_{T}(B) [GeV]");
-  //g_stat->GetYaxis()->SetTitle("X-section [nb/GeV]");
-  // g_stat->Draw("AP");
   
   double pt_zero[bin_n];
   for (int i=0;i<bin_n;i++) pt_zero[i]= 0.;
   
   TGraphAsymmErrors* g_syst= new TGraphAsymmErrors(bin_n,pt_m,x_sec,pt_zero,pt_zero,syst,syst);
   g_syst->SetTitle("");
-  g_syst->SetFillColor(2);
-  g_syst->SetFillStyle(3001);
   g_syst->SetMarkerColor(4);
   g_syst->SetMarkerStyle(1);
-  g_syst->SetLineColor(2);
-  //g_syst->Draw("2 same");
-
+  g_syst->SetLineColor(2);  
   
-  mg->Add(g_stat);
-  mg->Add(g_syst);
+  mg->Add(gr);
+  mg->Add(grs);
   mg->Draw("AP");
   mg->GetXaxis()->SetTitle("p_{T}(B) [GeV]");
-  mg->GetYaxis()->SetTitle("X-section [nb/GeV]");
-
-  c.SaveAs(Form("./xresults/x_section_" + meson + ".pdf"));
+  mg->GetYaxis()->SetTitle("X-section [GeV^{-1}]");
 }
-//plot_xsection ends
-
-
-
 //function that evaluates the final systematic error
-double* error_syst_final(int n_bins,int n_sources_error,double (*source_error_bin)[5]){
-  double *final_syst = new double[n_bins];
+//s_errors_bin = array com os valores dos 5 erros por bin
+void error_syst_final(double s_errors_bin){ 
+  const int n_s_errors = 5;
+  //N, B, L, eff+A, eff MC
+  //number of sources of systematics errors
+  double s_errors_bin [n_pt_bins][n_s_errors];
+  //value of the systematic error for each source per pT bin -->need update
+  double final_syst[n_pt_bins];
   //value of the systematic error per bin
-  double sum_pow_syst[n_bins];
+  double sum_pow_syst[n_pt_bins];
   //sum of the squares ofthe syst errors
-   for(int s = 0; s<n_bins; s++){
+   for(int s = 0; s<n_pt_bins; s++){
     sum_pow_syst[s]=0;
   } 
  
   //loop through the number of bins
-  for(int i=0;i<n_bins;i++){
+  for(int i=0;i<n_pt_bins;i++){
     //loop through the array of sources of error
-    for(int k=0;k<n_sources_error;k++){
-      sum_pow_syst[i] += pow(source_error_bin[i][k],2); 
+    for(int k=0;k<n_s_errors;k++){
+      sum_pow_syst[i] += pow(s_errors_bin[i][k],2); 
     }
     final_syst[i] = sqrt(sum_pow_syst[i]);
   }
-  return final_syst;
 }
 //error_syst_final ends
-
-//function that plots the ratio between the Bu plot and the Bs
-
+*/
