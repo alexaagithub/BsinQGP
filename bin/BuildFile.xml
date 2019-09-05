@@ -7,8 +7,10 @@
 <environment>
 <bin name="skimmer"   file="skimmer_new.cc"></bin>
 <bin name="bmesons"   file="bmesons.cc"></bin>
+<bin name="teste2"   file="novo.cc"></bin>
 <bin name="bbin"   file="bmesons_bin.cc"></bin>
 <bin name="teste"   file="x_section.cc"></bin>
+<bin name="xsec"   file="x_sec.cc"></bin>
 
 </environment>
 

@@ -92,7 +92,7 @@ void fit_syst_error_bin(TString, double a, double b);
 // 0 = Bu
 // 1 = Bs
 
-#define particle 0
+#define particle 1
 
 int main(){
   
@@ -580,7 +580,8 @@ void pT_analysis(RooWorkspace& w, int n, TString ptfile, TString datafile){
       double val = 0.; 
       double val_nominal = 0.;
       val = get_yield_syst(data_pt, syst_src[k]);
-      val_nominal = get_yield_syst(data_pt, syst_src[1]);
+      val_nominal = get_yield_syst(data_pt, syst_src[0]);
+      cout<<"syst nominal: "<<syst_src[0]<<endl;
       //yield_syst_rel[i][k] = (val - val_nominal)/val_nominal;
       yield_syst[i][k] = (val - val_nominal);
       cout << "bin:" << i << " range bin min" << pt_bins[i] << " src:" << k << " syst:" << syst_src[k] << " yield syst:" << yield_syst[i][k]<< " rel:"<<  ((val - val_nominal)/val_nominal)*100 << "\%"<<endl;

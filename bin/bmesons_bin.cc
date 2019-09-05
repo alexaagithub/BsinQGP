@@ -423,6 +423,9 @@ void pT_analysis(RooWorkspace& w, int n, TString ptfile, TString datafile){
   const int n_pt_bins = 4;
   double pt_bins[n_pt_bins + 1] = {5,10,15,20,50};
 
+  //const int n_pt_bins = 1;
+  //double pt_bins[n_pt_bins + 1] = {5,50};
+
   double pt_mean[n_pt_bins];
   double pt_low[n_pt_bins];
   double pt_high[n_pt_bins];
@@ -580,7 +583,8 @@ void pT_analysis(RooWorkspace& w, int n, TString ptfile, TString datafile){
       double val = 0.; 
       double val_nominal = 0.;
       val = get_yield_syst(data_pt, syst_src[k]);
-      val_nominal = get_yield_syst(data_pt, syst_src[1]);
+      val_nominal = get_yield_syst(data_pt, syst_src[0]);
+      cout<<"syst nominal: "<<syst_src[0]<<endl;
       //yield_syst_rel[i][k] = (val - val_nominal)/val_nominal;
       yield_syst[i][k] = (val - val_nominal);
       cout << "bin:" << i << " range bin min" << pt_bins[i] << " src:" << k << " syst:" << syst_src[k] << " yield syst:" << yield_syst[i][k]<< " rel:"<<  ((val - val_nominal)/val_nominal)*100 << "\%"<<endl;
