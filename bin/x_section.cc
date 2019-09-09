@@ -57,6 +57,7 @@
 #include <TGraphAsymmErrors.h>
 #include <TEfficiency.h>
 #include "TMultiGraph.h"
+#include <TAxis.h>
 
 using namespace RooStats;
 using namespace RooFit;
@@ -93,7 +94,7 @@ int main(){
   const double luminosity = 1.5e-9;
   const double luminosity_error = 0.02;  
 
-  double pt_bins[] = {5, 10, 15, 20, 50};
+  double pt_bins[] = {5,10, 15, 20, 50};
   const int n_pt_bins = 4;
   const int n_s_errors = 4;
   //number of sources of systematic error
@@ -236,12 +237,6 @@ int main(){
     stat_Bu_final[i] = (stat_Bu[i]/raw_Bu_y[i])* x_sec_Bu[i];
     stat_Bs_final[i] = (stat_Bs[i]/raw_Bs_y[i])* x_sec_Bs[i];
     }
-
-  //PRINT
-  for (int i=0;i<n_pt_bins;i++){
-    cout<<"x_sec_Bu: "<<x_sec_Bu_syst[i]<<endl;
-    cout<<"x_sec_Bs: "<<x_sec_Bs_syst[i]<<endl;
-  }
   
 
   //PLOT B+ X-section
@@ -249,12 +244,13 @@ int main(){
   //PLOT Bs X-section
   plot_xsection(n_pt_bins,pT_Bs,pT_min_Bs,pT_max_Bs,x_sec_Bs,stat_Bs_final,syst_Bs_final,"Bs");
 
-  /*
-//PLOT B+ X-section
-  plot_xsection(n_pt_bins,pT_Bu,pT_min_Bu,pT_max_Bu,x_sec_Bu,stat_Bu,syst_Bu_final,"Bu");
-  //PLOT Bs X-section
-  plot_xsection(n_pt_bins,pT_Bs,pT_min_Bs,pT_max_Bs,x_sec_Bs,stat_Bs,syst_Bs_final,"Bs");
-  */
+ //PRINT VALUES
+  for (int i=0;i<n_pt_bins;i++){
+    cout<<"bin: "<<i<<" x-sec: "<<x_sec_Bu[i]<<" syst error: "<<syst_Bu_final[i]<<" stat error: "<<stat_Bu_final[i]<<endl;
+    cout<<"bin: "<<i<<" x-sec: "<<x_sec_Bs[i]<<" syst error: "<<syst_Bs_final[i]<<" stat error: "<<stat_Bs_final[i]<<endl;
+
+  }
+
 }
 
 //main ends
@@ -284,17 +280,24 @@ double get_pt_high(int bin, TGraphAsymmErrors * graph_name){
 
 void plot_xsection(int bin_n,double* pt_m, double* pt_l, double* pt_h, double* x_sec, double* stat, double* syst, TString meson){
   TCanvas c;
-  TMultiGraph* mg = new TMultiGraph();
+  // TMultiGraph* mg = new TMultiGraph();
   
   TGraphAsymmErrors* g_stat = new TGraphAsymmErrors(bin_n,pt_m,x_sec,pt_l,pt_h,stat,stat);
   g_stat->SetTitle("");
   g_stat->SetMarkerColor(4);
   g_stat->SetMarkerStyle(1);
   g_stat->SetLineColor(1);
-  //g_stat->GetXaxis()->SetTitle("p_{T}(B) [GeV]");
-  //g_stat->GetYaxis()->SetTitle("X-section [nb/GeV]");
-  // g_stat->Draw("AP");
-  
+  //g_stat->GetXaxis()->SetLimits(10,52);
+  //g_stat->GetXaxis()->SetRangeUser(10,52);
+  g_stat->GetXaxis()->SetTitle("p_{T}(B) [GeV]");
+  g_stat->GetYaxis()->SetTitle("X-section [nb/GeV]");
+  g_stat->SetMinimum(-5e15);
+  g_stat->SetMaximum(15e17);
+  g_stat->Draw("AP");
+  c.Modified();
+ 
+
+  /*
   double pt_zero[bin_n];
   for (int i=0;i<bin_n;i++) pt_zero[i]= 0.;
   
@@ -305,15 +308,22 @@ void plot_xsection(int bin_n,double* pt_m, double* pt_l, double* pt_h, double* x
   g_syst->SetMarkerColor(4);
   g_syst->SetMarkerStyle(1);
   g_syst->SetLineColor(2);
+  g_stat->GetXaxis()->SetLimits(10,52);
   //g_syst->Draw("2 same");
 
   
   mg->Add(g_stat);
   mg->Add(g_syst);
+  //mg->GetXaxis()->SetLimits(10,52);
+  //mg->GetXaxis()->SetRange(10,52);
   mg->Draw("AP");
+  mg->GetXaxis()->SetLimits(10,52);
+  mg->SetMinimum(-5e15);
+  mg->SetMaximum(15e15);
+  c.Modified();
   mg->GetXaxis()->SetTitle("p_{T}(B) [GeV]");
   mg->GetYaxis()->SetTitle("X-section [nb/GeV]");
-
+  */
   c.SaveAs(Form("./xresults/x_section_" + meson + ".pdf"));
 }
 //plot_xsection ends

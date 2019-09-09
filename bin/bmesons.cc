@@ -86,13 +86,13 @@ void fit_syst_error_bin(TString, double a, double b);
 // 0 = read full data
 // note: when reading tratio should assign weight=1 for events out of range
 
-#define DATA_CUT 0
+#define DATA_CUT 1
 
 //particle
 // 0 = Bu
 // 1 = Bs
 
-#define particle 1
+#define particle 0
 
 int main(){
   
@@ -101,18 +101,6 @@ int main(){
   TString input_file_data = particle ? "/lstore/cms/ev19u032/prefiltered_trees_final/selected_data_ntphi_PbPb_2018_corrected_test_train.root" : "/lstore/cms/ev19u032/prefiltered_trees_final/selected_data_ntKp_PbPb_2018_corrected_test_train.root";
 
   TString input_file_mc = particle ? "/lstore/cms/ev19u032/prefiltered_trees_final/selected_mc_ntphi_PbPb_2018_corrected_BDT.root" :  "/lstore/cms/ev19u032/prefiltered_trees_final/selected_mc_ntKp_PbPb_2018_corrected_BDT.root";
-
-  //
-  //input Bs dados: /lstore/cms/ev19u032/prefiltered_trees_final/selected_data_ntphi_PbPb_2018_corrected_test_train.root
-
-
-  //input Bu dados: /lstore/cms/ev19u032/prefiltered_trees_final/selected_data_ntKp_PbPb_2018_corrected_test_train.root
-
-  //input Bs mc: /lstore/cms/ev19u032/prefiltered_trees_final/selected_mc_ntphi_PbPb_2018_corrected_BDT.root
-
-
-  //input Bu mc: /lstore/cms/ev19u032/prefiltered_trees_final/selected_mc_ntKp_PbPb_2018_corrected_BDT.root
-
 
   std::vector<TH1D*> histos_sideband_sub;
   std::vector<TH1D*> histos_mc;
@@ -440,13 +428,14 @@ void pT_analysis(RooWorkspace& w, int n, TString ptfile, TString datafile){
     m_yield_err_syst[k]=0;
   } 
 
-  //dúvida
+  
 
   RooDataSet* data_pt, data_w, data_wp;
   RooFitResult* fit_pt;
   RooRealVar* n_sig_pt;
   RooRealVar* n_comb_pt;
   
+  /*
   //plots the signal+background and signal distributions in linear and log scales
   TCanvas* a = new TCanvas("pT","pT", 800, 600);
   a->Divide(2,2);
@@ -522,7 +511,8 @@ void pT_analysis(RooWorkspace& w, int n, TString ptfile, TString datafile){
     a->SaveAs("./results/Bs/Bpt/pTdistributions_Bs.gif");
     a->SaveAs("./results/Bs/Bpt/pTdistributions_Bs.pdf");
   }
-  
+  */
+ 
   //applies the splot method and evaluates the weighted average pT per bin
 
   const int n_pdf_syst=4;
@@ -545,7 +535,9 @@ void pT_analysis(RooWorkspace& w, int n, TString ptfile, TString datafile){
     //plots the fit result
     RooPlot* massframe = Bmass.frame(Title(""));
     data_pt->plotOn(massframe);
+    model->paramOn(massframe,Layout(0.60,0.90,0.75));
     model->plotOn(massframe, Range("all"));
+
     TCanvas b;
     massframe->Draw();
     if(particle == 0){
@@ -594,37 +586,44 @@ void pT_analysis(RooWorkspace& w, int n, TString ptfile, TString datafile){
     m_yield_err_syst[i] = sqrt(yield_err_syst[i]);
  
     //sPlot technique requires model parameters (other than the yields) to be fixed
-    RooRealVar* mean  = w.var("mean");
-    RooRealVar* sigma1 = w.var("sigma1");
-    RooRealVar* sigma2 = w.var("sigma2");
-    RooRealVar* cofs = w.var("cofs");
-    RooRealVar* lambda = w.var("lambda");
-    
-    mean->setConstant();
-    sigma1->setConstant();
-    sigma2->setConstant();
-    cofs->setConstant();
-    lambda->setConstant();
-    
-    SPlot("sData","An sPlot",*data_pt, model, RooArgList(*n_sig_pt,*n_comb_pt));
-    
-    w.import(*data_pt, Rename(Form("data_pt_WithSWeights_%d",i)));
+    //dosp = true -> the splot technique is applied
+    bool dosp = true;
+    if (dosp){
+      RooRealVar* mean  = w.var("mean");
+      RooRealVar* sigma1 = w.var("sigma1");
+      RooRealVar* sigma2 = w.var("sigma2");
+      RooRealVar* cofs = w.var("cofs");
+      RooRealVar* lambda = w.var("lambda");
+      
+      mean->setConstant();
+      sigma1->setConstant();
+      sigma2->setConstant();
+      cofs->setConstant();
+      lambda->setConstant();
+      
+      SPlot("sData","An sPlot",*data_pt, model, RooArgList(*n_sig_pt,*n_comb_pt));
+      
+      w.import(*data_pt, Rename(Form("data_pt_WithSWeights_%d",i)));
+      
+      RooDataSet* data_w = (RooDataSet*) w.data(Form("data_pt_WithSWeights_%d",i));
 
-    RooDataSet* data_w = (RooDataSet*) w.data(Form("data_pt_WithSWeights_%d",i));
-
-    RooDataSet* data_wb = new RooDataSet(data_w->GetName(),data_w->GetTitle(),data_w,*data_w->get(),0,"n_signal_sw");
-
-
-    //weighted average pT
-    double mean_w=data_wb->mean(*Bpt);
-    double mean_s=data_pt->mean(*Bpt);
-    pt_mean[i] = data_wb->mean(*Bpt);
-    cout<<"mean_weight:"<<mean_w<<endl;
-    cout<<"mean:"<< mean_s<<endl;
-
-    pt_low[i]= pt_mean[i]-pt_bins[i];
-    pt_high[i]= pt_bins[i+1]-pt_mean[i];
+      RooDataSet* data_wb = new RooDataSet(data_w->GetName(),data_w->GetTitle(),data_w,*data_w->get(),0,"n_signal_sw");
+      
+      
+      //weighted average pT
+      double mean_w=data_wb->mean(*Bpt);
+      double mean_s=data_pt->mean(*Bpt);
+      pt_mean[i] = data_wb->mean(*Bpt);
+      cout<<"mean_weight:"<<mean_w<<endl;
+      cout<<"mean:"<< mean_s<<endl;
+      
+      pt_low[i]= pt_mean[i]-pt_bins[i];
+      pt_high[i]= pt_bins[i+1]-pt_mean[i];
+    } else {
+      pt_low [i]= 0.5*(pt_bins[i+1]-pt_bins[i]);
+      pt_high[i]= 0.5*(pt_bins[i+1]-pt_bins[i]);
   
+    }
 
     //normalize yield to bin width
     double bin_width = pt_bins[i+1]-pt_bins[i];
@@ -633,8 +632,8 @@ void pT_analysis(RooWorkspace& w, int n, TString ptfile, TString datafile){
     yield_err_high[i] = yield_err_high[i]/bin_width;
     m_yield_err_syst[i] = m_yield_err_syst[i]/bin_width;
 
-    cout<<"pt: "<< pt_bins[i]<<"-" << pt_bins[i+1] << " mean_weight:"<<mean_w<< "  Nsig:" <<yield[i]<< "-"<<yield_err_low[i] <<"+" << yield_err_high[i]<<endl;
-    cout <<"pt: "<< pt_bins[i]<<"-" << pt_bins[i+1] <<" systematic uncertainty" <<m_yield_err_syst[i]<<endl;
+    //cout<<"pt: "<< pt_bins[i]<<"-" << pt_bins[i+1] << " mean_weight:"<<mean_w<< "  Nsig:" <<yield[i]<< "-"<<yield_err_low[i] <<"+" << yield_err_high[i]<<endl;
+    // cout <<"pt: "<< pt_bins[i]<<"-" << pt_bins[i+1] <<" systematic uncertainty" <<m_yield_err_syst[i]<<endl;
 
   }
 
