@@ -10,13 +10,18 @@
 
 using namespace std;
 
-double read_weights(TString var, double var_value, int meson);
-double getWeight(double var_value, TH1D* h_weight);
+//double read_weights(TString var, double var_value, int meson);
+//double getWeight(double var_value, TH1D* h_weight);
 
-//#define particle 1
+double read_weights(TH1D* histo, double var_value);
+double getWeight(double var_value, TH1D* histo);
+TH1D* read_histos_weights(TString var, int meson);
+
+#define particle 1
 //0 = B+;   
 //1 = Bs;
 
+/*
 int main(int argc, char *argv[]){
 
   int particle; 
@@ -27,7 +32,11 @@ int main(int argc, char *argv[]){
   convert >> particle;
 
   cout << "---" << particle << endl;
+*/
 
+int main(){
+
+  
   //MC cuts
  
   TFile* f_mc_cuts = new TFile(particle ? "/lstore/cms/ev19u032/prefiltered_trees_final/selected_mc_ntphi_PbPb_2018_corrected_nocuts_BDT.root" : "/lstore/cms/ev19u032/prefiltered_trees_final/selected_mc_ntKp_PbPb_2018_corrected_BDT.root");
@@ -40,8 +49,16 @@ int main(int argc, char *argv[]){
   TFile* f_mc_nocuts = new TFile(particle ? "/lstore/cms/ev19u032/prefiltered_trees_final/acceptance_only_selected_mc_ntphi_PbPb_2018_corrected_nocuts_BDT.root" : "/lstore/cms/ev19u032/prefiltered_trees_final/acceptance_only_selected_mc_ntKp_PbPb_2018_corrected_BDT.root");
   TTree* t_nocuts = (TTree*)f_mc_nocuts->Get(particle ? "ntphi" : "ntKp");
   //TH1D* histo_BDT_nocuts = (TH1D*)t_nocuts->Get("BDT_total");
-
-
+  
+  //variable's histogram
+  
+  TH1D* histos_BDT = read_histos_weights("BDT_total",particle);
+  //return 0;
+  // TCanvas a;
+  // histos_BDT->Draw();
+  //a.SaveAs("./teste2.pdf");
+  //  return 0;
+  
   int n_pt_bins = 4;
   //int n_pt_bins = 8;
   double pt_bins[] = {5, 10, 15, 20, 50};
@@ -55,7 +72,8 @@ int main(int argc, char *argv[]){
   TH1D* hist_tot_weights = new TH1D("hist_tot_weights", "hist_tot_weights", n_pt_bins, pt_bins);
   TH1D* hist_passed_weights = new TH1D("hist_passed_weights", "hist_passed_weights", n_pt_bins, pt_bins);
  
-
+ 
+ 
   //BDT - acceptance cut
   double bdt_1;
   float bpt1;
@@ -70,24 +88,18 @@ int main(int argc, char *argv[]){
   for(int evt = 0; evt < nevt1; evt++)    {
       t_nocuts->GetEntry(evt);
       hist_tot_noweights->Fill(bpt1);
-      weight = read_weights("BDT_total", bdt_1, particle);
+      //weight = read_weights("BDT_total", bdt_1, particle);
+      weight = read_weights(histos_BDT, bdt_1);
+      //cout<<"weight: "<<weight<<endl;
       hist_tot_weights->Fill(bpt1, weight);
-     
+      //if (weight!=1){
+      //cout<<"o 1 é diferente!"<<endl;
+      //}
       if(evt%1000==0) cout << "." << std::flush;
     }
   cout << endl;  
 
-  /*
-  for(int evt = 0; evt < t_nocuts->GetEntries(); evt++)
-    {
-      t_nocuts->GetEntry(evt);
-      hist_tot_noweights->Fill(bpt1);
-      cout<<"a partícula: "<<particle<<endl;
-      weight = read_weights("Bpt", bpt1, particle);
-      cout<<"weight: "<<weight<<endl;
-      hist_tot_weights->Fill(bpt1, weight);
-    }
-  */
+ 
   
   TCanvas tot_noweights;
   hist_tot_noweights->Draw();
@@ -114,9 +126,13 @@ int main(int argc, char *argv[]){
       t_cuts->GetEntry(evt);
       hist_passed_noweights->Fill(bpt2);
       //cout<<"bdt: "<<bdt_2<<endl;
-      weight2 = read_weights("BDT_total", bdt_2, particle);
-      //cout<<"weight2: "<<weight2<<endl;
+      // weight2 = read_weights("BDT_total", bdt_2, particle);
+      weight2 = read_weights(histos_BDT, bdt_2);
+      // cout<<"weight2: "<<weight2<<endl;
       hist_passed_weights->Fill(bpt2, weight2);
+      //if (weight2 !=1){
+      //cout<<"o 2 é diferente!"<<endl;
+      // }
 
       if(evt%1000==0) cout << "." << std::flush;
 
@@ -124,17 +140,6 @@ int main(int argc, char *argv[]){
 
   cout << endl;  
 
-  /*
-  for(int evt = 0; evt < t_cuts->GetEntries(); evt++)
-    {
-      t_cuts->GetEntry(evt);
-      hist_passed_noweights->Fill(bpt2);
-      cout<<"particle: "<<particle<<endl;
-      weight2 = read_weights("Bpt", bpt2, particle);
-      cout<<"weight2"<<weight2<<endl;
-      hist_passed_weights->Fill(bpt2, weight2);
-    }
-  */
 
   
   TCanvas passed_noweights;
@@ -192,11 +197,63 @@ int main(int argc, char *argv[]){
   f1->ls();
   f1->Close();
  
- 
+  
   return 0;
   
 }
 
+  
+//receives the variable, returns its histogram.
+  TH1D* read_histos_weights(TString variable, int meson){
+ 
+  TString input_file = meson ? "/lstore/cms/ev19u032/weights/weights_Bs.root" :"/lstore/cms/ev19u032/weights/weights_Bu.root";
+ 
+  TFile* f_wei = new TFile(input_file);
+
+  TH1D* histo_variable = (TH1D*)f_wei->Get(Form("weights_"+variable));
+
+
+  TCanvas c;
+  histo_variable->Draw();
+  c.SaveAs("histo_variable.png");
+  //  f_wei->Close();
+  //delete f_wei;
+
+  return histo_variable;
+
+  }
+
+
+//receives the variable's histogram and the event;  returns the weights
+double read_weights(TH1D* histo, double var_value){
+
+  double weight;
+  double variable_min;
+  double variable_max;
+
+  variable_min = histo->GetXaxis()->GetXmin();
+  variable_max = histo->GetXaxis()->GetXmax();  
+  
+  //if the event is not in the range its weight is 1.
+  if(var_value>=variable_min && var_value<=variable_max){  
+    weight = getWeight(var_value,histo);
+  }
+  else {
+    weight = 1;
+  }
+
+
+  return weight;
+}
+
+//auxiliar function
+double getWeight(double var_value, TH1D* histo){
+  int bin = histo->FindBin(var_value);
+  return histo->GetBinContent(bin);
+}
+
+
+/*
 double read_weights(TString variable, double var_value, int meson){
  
   TString input_file = meson ? "/lstore/cms/ev19u032/weights/weights_Bs.root" :"/lstore/cms/ev19u032/weights/weights_Bu.root";
@@ -231,3 +288,6 @@ double getWeight(double var_value, TH1D* h_weight){
   int bin = h_weight->FindBin(var_value);
   return h_weight->GetBinContent(bin);
 }
+
+ */
+

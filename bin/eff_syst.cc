@@ -19,7 +19,7 @@ int main(){
   TFile* f_eff0 = new TFile(particle ?  "./results_eff/Bs_efficiency0.root" :  "./results_eff/Bu_efficiency0.root");
   TFile* f_eff1 = new TFile(particle ?  "./results_eff/Bs_efficiency1.root" : "./results_eff/Bu_efficiency1.root");
  
-  //const int n_pt_bins = 8; //run B+ again now for 8 bins
+  //const int n_pt_bins = 8; //run B+ again (now for 8 bins)
   const int n_pt_bins = 4;
   //double pt_bins[] = {5, 10, 15, 20, 50};
 

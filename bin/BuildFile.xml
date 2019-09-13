@@ -10,9 +10,8 @@
 <bin name="bbin"   file="bmesons_bin.cc"></bin>
 <bin name="x-sec"   file="x_section.cc"></bin>
 <bin name="eff"   file="eff.cc"></bin>
-<bin name="eff2"   file="eff_2.cc"></bin>
 <bin name="effsyst" file="eff_syst.cc"></bin>
-<bin name="teste" file="teste.cc"></bin>
+
 
 </environment>
 
