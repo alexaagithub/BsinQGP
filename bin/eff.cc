@@ -43,8 +43,9 @@ int main(int argc, char *argv[]){
 
 
   int n_pt_bins = 4;
-  //  double pt_bins[] = {5, 50};
+  //int n_pt_bins = 8;
   double pt_bins[] = {5, 10, 15, 20, 50};
+  //double pt_bins[] = {5 ,7, 10, 15, 20, 30, 40, 50, 60};
  
   
   TH1D* hist_tot_noweights = new TH1D("hist_tot_noweights", "hist_tot_noweights", n_pt_bins, pt_bins);

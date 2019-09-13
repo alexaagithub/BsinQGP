@@ -9,16 +9,17 @@
 
 using namespace std;
 
-#define particle 0
+#define particle 1
 
 //0 = B+;
 //1 = Bs;
 
 int main(){
-  //editar os nomes
+  
   TFile* f_eff0 = new TFile(particle ?  "./results_eff/Bs_efficiency0.root" :  "./results_eff/Bu_efficiency0.root");
   TFile* f_eff1 = new TFile(particle ?  "./results_eff/Bs_efficiency1.root" : "./results_eff/Bu_efficiency1.root");
  
+  //const int n_pt_bins = 8; //run B+ again now for 8 bins
   const int n_pt_bins = 4;
   //double pt_bins[] = {5, 10, 15, 20, 50};
 
@@ -34,10 +35,16 @@ int main(){
   double y_values[n_pt_bins];
    
   double x_values[] = {7.5, 12.5, 17.5, 35};
+
+  //double x_values[] = {6, 8.5, 12.5, 17.5, 25, 35, 45, 55};
  
   double x_errors[] = {2.5, 2.5, 2.5, 15};
- 
+
+  //double x_errors[] = {1, 1.5, 2.5, 2.5, 5, 5, 5, 5};
+
   double y_errors[] = {0, 0, 0, 0};
+ 
+  //double y_errors[] = {0, 0, 0, 0, 0, 0, 0, 0};
   
 
   for(int i = 0; i < n_pt_bins; i++) {
