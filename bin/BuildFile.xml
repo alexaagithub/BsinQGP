@@ -11,8 +11,7 @@
 <bin name="x-sec"   file="x_section.cc"></bin>
 <bin name="eff"   file="eff.cc"></bin>
 <bin name="effsyst" file="eff_syst.cc"></bin>
-
-
+<bin name="draft" file="draft.cc"></bin>
 </environment>
 
 <Flags CXXFLAGS="-g"/>

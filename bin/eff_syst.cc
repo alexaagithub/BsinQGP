@@ -9,19 +9,21 @@
 
 using namespace std;
 
-#define particle 1
+#define particle 0
 
 //0 = B+;
 //1 = Bs;
 
 int main(){
   
-  TFile* f_eff0 = new TFile(particle ?  "./results_eff/Bs_efficiency0.root" :  "./results_eff/Bu_efficiency0.root");
-  TFile* f_eff1 = new TFile(particle ?  "./results_eff/Bs_efficiency1.root" : "./results_eff/Bu_efficiency1.root");
+  TFile* f_eff0 = new TFile(particle ?  "./results_eff_bin/Bs_efficiency0.root" :  "./results_eff_bin/Bu_efficiency0.root");
+  TFile* f_eff1 = new TFile(particle ?  "./results_eff_bin/Bs_efficiency1.root" : "./results_eff_bin/Bu_efficiency1.root");
  
   //const int n_pt_bins = 8; //run B+ again (now for 8 bins)
   const int n_pt_bins = 4;
+  //const int n_pt_bins = 1;
   //double pt_bins[] = {5, 10, 15, 20, 50};
+  // double pt_bins = {5, 50};
 
   TEfficiency* efficiency0; //= new TEfficiency("efficiency0", "efficiency0", n_pt_bins, pt_bins);
   TEfficiency* efficiency1; //= new TEfficiency("efficiency1", "efficiency1", n_pt_bins, pt_bins);
@@ -65,11 +67,11 @@ int main(){
   systematic_errors->GetYaxis()->SetTitle("systematic uncertainty");
   systematic_errors->GetXaxis()->SetTitle("p_{T} [GeV]");
 
-  c.SaveAs(particle ? "./results_eff/Bs_systematic_error.gif" : "./results_eff/Bu_systematic_error.gif");
-  c.SaveAs(particle ? "./results_eff/Bs_systematic_error.pdf" : "./results_eff/Bu_systematic_error.pdf");
+  c.SaveAs(particle ? "./results_eff_bin/Bs_systematic_error.gif" : "./results_eff_bin/Bu_systematic_error.gif");
+  c.SaveAs(particle ? "./results_eff_bin/Bs_systematic_error.pdf" : "./results_eff_bin/Bu_systematic_error.pdf");
   
 
-  TFile* f1 = new TFile(particle ? "./results_eff/Bs_efficiency_systematic_errors.root" : "./results_eff/Bu_efficiency_systematic_errors.root", "recreate");
+  TFile* f1 = new TFile(particle ? "./results_eff_bin/Bs_efficiency_systematic_errors.root" : "./results_eff_bin/Bu_efficiency_systematic_errors.root", "recreate");
   f1->cd();
   systematic_errors->Write();
   f1->Write();

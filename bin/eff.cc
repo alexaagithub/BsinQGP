@@ -1,4 +1,4 @@
-#include <TFile.h>
+ #include <TFile.h>
 #include <TTree.h>
 #include <TH1F.h>
 #include <TH1D.h>
@@ -17,7 +17,7 @@ double read_weights(TH1D* histo, double var_value);
 double getWeight(double var_value, TH1D* histo);
 TH1D* read_histos_weights(TString var, int meson);
 
-#define particle 1
+#define particle 0
 //0 = B+;   
 //1 = Bs;
 
@@ -61,8 +61,10 @@ int main(){
   
   int n_pt_bins = 4;
   //int n_pt_bins = 8;
+  //int n_pt_bins = 1;
   double pt_bins[] = {5, 10, 15, 20, 50};
   //double pt_bins[] = {5 ,7, 10, 15, 20, 30, 40, 50, 60};
+  //double pt_bins[] = {5, 50};
  
   
   TH1D* hist_tot_noweights = new TH1D("hist_tot_noweights", "hist_tot_noweights", n_pt_bins, pt_bins);
@@ -103,12 +105,12 @@ int main(){
   
   TCanvas tot_noweights;
   hist_tot_noweights->Draw();
-  tot_noweights.SaveAs(particle ? "./results_eff/Bs_tot_noweights.pdf" : "./results_eff/Bu_tot_noweights.pdf");
+  tot_noweights.SaveAs(particle ? "./results_eff_bin/Bs_tot_noweights.pdf" : "./results_eff_bin/Bu_tot_noweights.pdf");
  
 
   TCanvas tot_weights;
   hist_tot_weights->Draw();
-  tot_weights.SaveAs(particle ? "./results_eff/Bs_totweights.pdf" : "./results_eff/Bu_totweights.pdf");
+  tot_weights.SaveAs(particle ? "./results_eff_bin/Bs_totweights.pdf" : "./results_eff_bin/Bu_totweights.pdf");
  
   //BDT - cuts
   double bdt_2;
@@ -144,34 +146,34 @@ int main(){
   
   TCanvas passed_noweights;
   hist_passed_noweights->Draw();
-  passed_noweights.SaveAs(particle ? "./results_eff/Bs_passed_noweights.pdf" : "./results_eff/Bu_passed_noweights.pdf");
+  passed_noweights.SaveAs(particle ? "./results_eff_bin/Bs_passed_noweights.pdf" : "./results_eff_bin/Bu_passed_noweights.pdf");
  
   
   TCanvas passed_weights;
   hist_passed_weights->Draw();
-  passed_weights.SaveAs(particle ? "./results_eff/Bs_passed_weights.pdf" : "./results_eff/Bu_passed_weights.pdf");
+  passed_weights.SaveAs(particle ? "./results_eff_bin/Bs_passed_weights.pdf" : "./results_eff_bin/Bu_passed_weights.pdf");
   
   
   TEfficiency* efficiency0 = new TEfficiency(*hist_passed_noweights, *hist_tot_noweights);
   TCanvas c0;
   efficiency0->Draw("AP");
-  c0.SaveAs(particle ? "./results_eff/Bs_efficiency0.pdf" : "./results_eff/Bu_efficiency0.pdf");
+  c0.SaveAs(particle ? "./results_eff_bin/Bs_efficiency0.pdf" : "./results_eff_bin/Bu_efficiency0.pdf");
  
 
   TEfficiency* efficiency1 = new TEfficiency(*hist_passed_weights, *hist_tot_weights);
   TCanvas c1;
   efficiency1->Draw("AP");
-  c1.SaveAs(particle ? "./results_eff/Bs_efficiency1.pdf" : "./results_eff/Bu_efficiency1.pdf");
+  c1.SaveAs(particle ? "./results_eff_bin/Bs_efficiency1.pdf" : "./results_eff_bin/Bu_efficiency1.pdf");
 
   //create root files
  
-  TFile* f0 = new TFile(particle ? "./results_eff/Bs_efficiency0.root" : "./results_eff/Bu_efficiency0.root" , "recreate");
+  TFile* f0 = new TFile(particle ? "./results_eff_bin/Bs_efficiency0.root" : "./results_eff_bin/Bu_efficiency0.root" , "recreate");
   
   f0->cd();
   efficiency0->Write();
   f0->Write();
 
-  TFile* f1 = new TFile(particle ? "./results_eff/Bs_efficiency1.root" : "./results_eff/Bu_efficiency1.root" , "recreate");
+  TFile* f1 = new TFile(particle ? "./results_eff_bin/Bs_efficiency1.root" : "./results_eff_bin/Bu_efficiency1.root" , "recreate");
  
   f1->cd();
   efficiency1->Write();
