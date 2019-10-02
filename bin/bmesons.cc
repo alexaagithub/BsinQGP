@@ -1370,7 +1370,7 @@ std::vector<TH1D*> sideband_subtraction(RooWorkspace* w, int* n, int n_var){
     histos.push_back(create_histogram(variables[24], "BDT_pt_10_15",factor, reduceddata_side, reduceddata_central, data, n[23]));
     histos.push_back(create_histogram(variables[25], "BDT_pt_15_20",factor, reduceddata_side, reduceddata_central, data, n[24]));
     histos.push_back(create_histogram(variables[26], "BDT_pt_20_30",factor, reduceddata_side, reduceddata_central, data, n[25]));
-    histos.push_back(create_histogram(variables[28], "BDT_pt_30_50",factor, reduceddata_side, reduceddata_central, data, n[26]));
+    histos.push_back(create_histogram(variables[27], "BDT_pt_30_50",factor, reduceddata_side, reduceddata_central, data, n[26]));
     histos.push_back(create_histogram(variables[28], "BDT_pt_50_100",factor, reduceddata_side, reduceddata_central, data, n[27]));
     histos.push_back(create_histogram(variables[29], "BDT_total",factor, reduceddata_side, reduceddata_central, data, n[28]));
 
