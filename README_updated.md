@@ -13,19 +13,19 @@ mkdir prefiltered_trees
 
 to compile: scram b  
 
-First run selection_skimmer.cc!  
+to run: bmesons 
 
-It runs over data and mc samples in lstore  
-right now for B+  
-to run over other samples, change inputs  
-It loops over the data or mc samples, flattening the tree, applying the selection, and writing a new tree with less variables  
+It runs over data and mc trees in lstore. 
+To run over your trees, change inputs  
 
-running example: selection_skimmer --colsyst PbPb --mc 0 --channel 1  
+First delete the folders:
+-old/
+-results_eff/
+-results_eff_8_bins/
+-results_final/
+-results_new
 
-Then you can run sideban_subtraction.cc over the outputs of selection_skimmer that are in prefiltered_trees  
-It applies a sideband subtraction method to the data and then compares the result with the monte carlo distributions  
-
-First do:  
+and then do:  
 mkdir results
 
 mkdir results/Bu/mc_validation_plots/ss_mc
@@ -45,7 +45,12 @@ mkdir results/Bs/sideband_sub/
 
 mkdir results/Bu/splot/Bmass
 mkdir results/Bs/splot/Bmass
+mkdir results/Bu/splot/sig
+mkdir results/Bs/splot/sig
+mkdir results/Bu/splot/bkg
+mkdir results/Bs/splot/bkg
+mkdir results/Bu/splot/sig_bkg
+mkdir results/Bs/splot/sig_bkg
 
-
-To run:  
-bmesons 
+mkdir results/Bu/pulls
+mkdir results/Bs/pulls
