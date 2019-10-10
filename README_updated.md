@@ -9,7 +9,6 @@ cmsrel CMSSW_10_3_1_patch3
 cd CMSSW_10_3_1_patch3/src  
 mkdir UserCode  
 git clone <repo>  
-mkdir prefiltered_trees  
 
 to compile: scram b  
 
