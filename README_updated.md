@@ -19,11 +19,11 @@ It runs over data and mc trees in lstore.
 To run over your trees, change inputs  
 
 First delete the folders:
--old/
--results_eff/
--results_eff_8_bins/
--results_final/
--results_new
+old/
+results_eff/
+results_eff_8_bins/
+results_final/
+results_new
 
 and then do:  
 mkdir results
